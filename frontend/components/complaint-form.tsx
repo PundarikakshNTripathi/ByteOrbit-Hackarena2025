@@ -25,9 +25,10 @@ const ISSUE_CATEGORIES = [
 
 interface ComplaintFormProps {
   onSuccess?: () => void
+  onCancel?: () => void
 }
 
-export function ComplaintForm({ onSuccess }: ComplaintFormProps) {
+export function ComplaintForm({ onSuccess, onCancel }: ComplaintFormProps) {
   const [currentStep, setCurrentStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
@@ -282,11 +283,16 @@ export function ComplaintForm({ onSuccess }: ComplaintFormProps) {
         <div className="flex justify-between pt-4">
           <Button
             variant="outline"
-            onClick={() => setCurrentStep(currentStep - 1)}
-            disabled={currentStep === 1}
+            onClick={() => {
+              if (currentStep === 1 && onCancel) {
+                onCancel()
+              } else {
+                setCurrentStep(currentStep - 1)
+              }
+            }}
           >
             <ChevronLeft className="mr-2 h-4 w-4" />
-            Previous
+            {currentStep === 1 ? "Cancel" : "Previous"}
           </Button>
           {currentStep < 3 ? (
             <Button

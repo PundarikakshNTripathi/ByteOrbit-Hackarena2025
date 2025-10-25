@@ -5,9 +5,8 @@ import { useParams } from "next/navigation"
 import { supabase, type Complaint, type ComplaintAction } from "@/lib/supabase"
 import { StatusTimeline } from "@/components/status-timeline"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { ArrowLeft, MapPin, Calendar, Tag } from "lucide-react"
+import { BackButton } from "@/components/back-button"
+import { MapPin, Calendar, Tag } from "lucide-react"
 import dynamic from "next/dynamic"
 
 const DynamicMap = dynamic(() => import("@/components/map-picker"), { 
@@ -99,12 +98,7 @@ export default function ComplaintDetailPage() {
     return (
       <div className="container py-20 flex flex-col items-center justify-center space-y-4">
         <p className="text-muted-foreground">Complaint not found</p>
-        <Link href="/dashboard">
-          <Button>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Dashboard
-          </Button>
-        </Link>
+        <BackButton href="/dashboard" label="Back to Dashboard" variant="default" />
       </div>
     )
   }
@@ -113,12 +107,7 @@ export default function ComplaintDetailPage() {
     <div className="container py-12 px-4">
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Back Button */}
-        <Link href="/dashboard">
-          <Button variant="ghost">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Dashboard
-          </Button>
-        </Link>
+        <BackButton href="/dashboard" label="Back to Dashboard" />
 
         {/* Header */}
         <div className="space-y-4">

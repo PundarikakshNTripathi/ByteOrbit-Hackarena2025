@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { BackButton } from "@/components/back-button"
 import { supabase } from "@/lib/supabase"
 import { MapPin } from "lucide-react"
 
@@ -37,16 +38,18 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/50 px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <div className="flex items-center justify-center mb-4">
-            <MapPin className="h-8 w-8 text-primary" />
-          </div>
-          <CardTitle className="text-2xl text-center">Welcome back</CardTitle>
-          <CardDescription className="text-center">
-            Enter your credentials to access your account
-          </CardDescription>
-        </CardHeader>
+      <div className="w-full max-w-md">
+        <BackButton href="/" label="Back to Home" className="mb-4" />
+        <Card>
+          <CardHeader className="space-y-1">
+            <div className="flex items-center justify-center mb-4">
+              <MapPin className="h-8 w-8 text-primary" />
+            </div>
+            <CardTitle className="text-2xl text-center">Welcome back</CardTitle>
+            <CardDescription className="text-center">
+              Enter your credentials to access your account
+            </CardDescription>
+          </CardHeader>
         <form onSubmit={handleLogin}>
           <CardContent className="space-y-4">
             {error && (
@@ -89,6 +92,7 @@ export default function LoginPage() {
           </CardFooter>
         </form>
       </Card>
+      </div>
     </div>
   )
 }

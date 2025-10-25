@@ -4,9 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { ComplaintForm } from "@/components/complaint-form"
 import { useAuthStore } from "@/lib/store"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
+import { BackButton } from "@/components/back-button"
 import { AlertTriangle } from "lucide-react"
 
 export default function SubmitPage() {
@@ -41,9 +39,16 @@ export default function SubmitPage() {
     router.push("/dashboard")
   }
 
+  const handleCancel = () => {
+    router.back()
+  }
+
   return (
     <div className="container py-20 px-4">
       <div className="max-w-4xl mx-auto space-y-8">
+        {/* Back Button */}
+        <BackButton href="/dashboard" label="Back to Dashboard" />
+        
         <div className="text-center space-y-2">
           <h1 className="text-4xl font-bold tracking-tight">Report a Civic Issue</h1>
           <p className="text-muted-foreground text-lg">
@@ -61,7 +66,7 @@ export default function SubmitPage() {
           </div>
         </div>
 
-        <ComplaintForm onSuccess={handleSuccess} />
+        <ComplaintForm onSuccess={handleSuccess} onCancel={handleCancel} />
       </div>
     </div>
   )

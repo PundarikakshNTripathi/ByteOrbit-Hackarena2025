@@ -2,6 +2,10 @@
 
 A modern, responsive web application for reporting and tracking civic issues. Built with Next.js 14, TypeScript, Tailwind CSS, and Supabase.
 
+> 📖 **For complete documentation, see [DOCUMENTATION.md](./DOCUMENTATION.md)**  
+> 🧭 **For navigation guide, see [NAVIGATION_GUIDE.md](./NAVIGATION_GUIDE.md)**  
+> 🚀 **For quick setup, see [QUICKSTART.md](./QUICKSTART.md)**
+
 ## 🚀 Features
 
 - **User Authentication**: Secure signup and login with Supabase Auth
