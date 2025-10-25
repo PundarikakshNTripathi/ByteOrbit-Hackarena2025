@@ -28,11 +28,8 @@ ByteOrbit-Hackarena2025/
     ├── components/              # React components
     ├── lib/                     # Utilities and helpers
     ├── public/                  # Static assets
+    ├── FRONTEND_DOCUMENTATION.md # Complete frontend documentation
     ├── database_schema.sql      # Supabase database setup
-    ├── README.md                # Detailed documentation
-    ├── QUICKSTART.md            # Quick setup guide
-    ├── PROJECT_OVERVIEW.md      # Architecture details
-    ├── CONTRIBUTING.md          # Contribution guidelines
     └── setup.sh                 # Automated setup script
 ```
 
@@ -162,10 +159,17 @@ ByteOrbit-Hackarena2025/
 
 Comprehensive documentation is available in the `frontend/` directory:
 
-1. **README.md** - Complete guide with installation, features, and API
-2. **QUICKSTART.md** - Step-by-step setup for beginners
-3. **PROJECT_OVERVIEW.md** - Architecture, design decisions, and data flow
-4. **CONTRIBUTING.md** - Guidelines for contributors
+**[FRONTEND_DOCUMENTATION.md](./frontend/FRONTEND_DOCUMENTATION.md)** - Complete guide including:
+- Installation & Setup
+- Quick Start Guide
+- Project Structure
+- Navigation System
+- Components Reference
+- Database Setup
+- Development Guide
+- Deployment Instructions
+- Contributing Guidelines
+- Troubleshooting
 
 ## 🎨 Screenshots
 
@@ -210,7 +214,7 @@ Timeline view of all actions taken on a complaint
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see `frontend/CONTRIBUTING.md` for:
+We welcome contributions! Please see [frontend/FRONTEND_DOCUMENTATION.md](./frontend/FRONTEND_DOCUMENTATION.md#contributing) for:
 - Code style guidelines
 - Pull request process
 - Development workflow
@@ -257,10 +261,10 @@ See `frontend/database_schema.sql` for complete schema and setup SQL.
 ## 📞 Support
 
 For issues or questions:
-1. Check the documentation in `frontend/`
-2. Search existing GitHub issues
-3. Create a new issue with details
-4. Contact team members
+1. Check [FRONTEND_DOCUMENTATION.md](./frontend/FRONTEND_DOCUMENTATION.md)
+2. Review the [Troubleshooting section](./frontend/FRONTEND_DOCUMENTATION.md#troubleshooting)
+3. Search existing GitHub issues
+4. Create a new issue with details
 
 ## 📝 License
 
@@ -303,6 +307,6 @@ CivicAgent aims to:
 
 **Built with ❤️ for better communities**
 
-For the complete experience, navigate to the `frontend/` directory and follow the QUICKSTART.md guide.
+For the complete experience and detailed setup instructions, see [frontend/FRONTEND_DOCUMENTATION.md](./frontend/FRONTEND_DOCUMENTATION.md).
 
 Happy coding! 🎉
