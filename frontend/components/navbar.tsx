@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { MapPin, FileText, LayoutDashboard, LogIn, UserPlus, Menu, X } from 'lucide-react';
+import { MapPin, FileText, LayoutDashboard, LogIn, UserPlus, Menu, X, Shield } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/lib/store';
@@ -53,6 +53,12 @@ export function Navbar() {
           <ThemeToggle />
           {user ? (
             <div className="flex items-center gap-2">
+              <Link href="/admin-dashboard">
+                <Button variant="ghost" size="sm">
+                  <Shield className="h-4 w-4 mr-2" />
+                  Admin
+                </Button>
+              </Link>
               <span className="text-sm text-muted-foreground hidden lg:inline">
                 {user.email}
               </span>
@@ -122,6 +128,12 @@ export function Navbar() {
                   <div className="px-3 py-2 text-sm text-muted-foreground">
                     {user.email}
                   </div>
+                  <Link href="/admin-dashboard" onClick={() => setMobileMenuOpen(false)}>
+                    <Button variant="ghost" className="w-full justify-start mb-2">
+                      <Shield className="h-4 w-4 mr-2" />
+                      Admin
+                    </Button>
+                  </Link>
                   <Button
                     variant="ghost"
                     className="w-full justify-start"

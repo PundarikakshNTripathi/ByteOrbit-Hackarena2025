@@ -1,15 +1,64 @@
-# CivicAgent Frontend - Complete Documentation# CivicAgent Frontend - Complete Documentation
+# CivicAgent Frontend - Complete Documentation
 
+> **A modern, responsive AI-powered web application for reporting and tracking civic issues**  
+> Built with Next.js 14, TypeScript, Tailwind CSS, and Supabase
 
+---
 
-> **A modern, responsive web application for reporting and tracking civic issues**  > **A modern, responsive web application for reporting and tracking civic issues**  
+## 🚨 QUICK START - See the AI Features!
 
-> Built with Next.js 14, TypeScript, Tailwind CSS, and Supabase> Built with Next.js 14, TypeScript, Tailwind CSS, and Supabase
+### Why You Don't See the Features Yet
 
+The new AI-powered features and Admin Dashboard **require proper database setup and user authentication**. 
 
+**⚡ 5-Minute Setup:**
 
-------
+#### Step 1: Database Migration (CRITICAL)
 
+Your existing database is missing the new fields! Run this in Supabase SQL Editor:
+
+```sql
+-- Add AI-powered fields to complaints table
+alter table complaints add column if not exists ai_detected_category text;
+alter table complaints add column if not exists ai_confidence integer;
+alter table complaints add column if not exists ai_report text;
+alter table complaints add column if not exists assigned_department text;
+alter table complaints add column if not exists official_summary text;
+
+-- Add user feedback fields
+alter table complaints add column if not exists user_rating integer check (user_rating >= 1 and user_rating <= 5);
+alter table complaints add column if not exists user_feedback text;
+
+-- Update status constraint to include 'rejected'
+alter table complaints drop constraint if exists complaints_status_check;
+alter table complaints add constraint complaints_status_check 
+  check (status in ('submitted', 'in_progress', 'escalated', 'resolved', 'rejected'));
+
+-- Update action types
+alter table complaint_actions drop constraint if exists complaint_actions_action_type_check;
+alter table complaint_actions add constraint complaint_actions_action_type_check 
+  check (action_type in ('submitted', 'emailed', 'email_sent', 'escalated', 'resolved', 'rejected', 'sla_missed', 'follow_up', 'status_change', 'in_progress'));
+```
+
+**Where to run:** Supabase project → SQL Editor → New Query → Paste → Run
+
+#### Step 2: Start Dev Server & Test
+
+```bash
+cd frontend
+npm run dev
+```
+
+Then:
+1. Visit http://localhost:3000
+2. **Sign up** for an account (required!)
+3. Go to `/submit` and upload an image
+4. Wait 2 seconds to see AI analysis!
+5. Click "Admin" in navbar to see dashboard
+
+**That's it!** All features will work after these 2 steps.
+
+---
 
 
 ## 📚 Table of Contents## 📚 Table of Contents
@@ -235,6 +284,68 @@ Multi-step complaint submission form with:Multi-step complaint submission form w
 - Touch-friendly interactions- Touch-friendly interactions
 
 - Hamburger menu for mobile navigation- Hamburger menu for mobile navigation
+
+### 🤖 AI-Powered Features (NEW)
+
+**Intelligent Issue Detection**
+- Automatic image analysis on upload (2-second mock analysis)
+- AI-detected category with 85-99% confidence scores
+- Smart category pre-fill in submission form
+- Confirmation workflow for AI suggestions
+- Visual AI indicators with sparkles icons
+
+**AI Report Display**
+- Detected issue category with confidence percentage
+- Assigned department information
+- Official summary of the issue
+- Detailed AI-generated analysis
+- Visible on complaint detail pages
+
+**User Feedback System**
+- 5-star rating system for resolved complaints
+- Optional comment/feedback text area
+- Owner-only access (users can only rate their own complaints)
+- Feedback stored with complaint for transparency
+- Satisfaction labels (Poor to Excellent)
+
+**Explainable AI (XAI) Placeholder**
+- Ready for future integration
+- Placeholder button in escalated actions
+- Designed for AI decision transparency
+
+### 🛡️ Administrative Features (NEW)
+
+**Admin Dashboard** (`/admin-dashboard`)
+- Real-time statistics cards:
+  - Total Complaints
+  - Submitted (pending action)
+  - In Progress (being addressed)
+  - Escalated (sent to higher authorities)
+  - Resolved (completed)
+- Searchable complaints table
+- Status badges and quick filters
+- Protected route with authentication check
+
+**Civic Intelligence Placeholders** (Phase 3 Ready)
+- Issue heatmap visualization placeholder
+- Performance metrics cards placeholder
+- Designed for future analytics integration
+
+**Complaint Management** (`/admin-complaints/[id]`)
+- Full complaint detail view
+- Status update dropdown with instant save
+- AI report integration
+- User feedback display (if provided)
+- Action timeline with all status changes
+- Image and location display
+- Back to dashboard navigation
+
+**Admin Access Control**
+- Role-based access (user/admin roles in User interface)
+- MVP mode: allows all authenticated users
+- Ready for production role enforcement
+- Admin link in navbar for quick access
+- Sidebar navigation in admin layout
 
 
 
@@ -2996,6 +3107,445 @@ npm run dev
 3. Read error messages carefully
 4. Try in incognito mode
 5. Open a new issue with details
+
+---
+
+## 🆕 New Features - AI Integration & Admin Panel
+
+### Overview of Updates
+
+This section documents the major enhancements added to CivicAgent, including AI-powered complaint analysis, user feedback system, and a comprehensive admin dashboard.
+
+### AI-Powered Features
+
+#### 1. AI Image Analysis (`components/complaint-form.tsx`)
+
+**Feature**: Automatic issue detection from uploaded images
+
+**How it Works**:
+- When a user uploads an image in Step 1 of complaint submission
+- System triggers a 2-second mock AI analysis
+- AI detects the issue category with 85-99% confidence
+- User sees a confirmation dialog with the AI's suggestion
+
+**Code Implementation**:
+```tsx
+// State for AI features
+const [aiAnalyzing, setAiAnalyzing] = useState(false)
+const [aiDetectedCategory, setAiDetectedCategory] = useState<string | null>(null)
+const [aiConfidence, setAiConfidence] = useState<number | null>(null)
+const [showAiConfirmation, setShowAiConfirmation] = useState(false)
+const [categoryConfirmed, setCategoryConfirmed] = useState(false)
+
+// Mock AI analysis function
+const analyzeImageWithAI = async (file: File) => {
+  setAiAnalyzing(true)
+  // Simulate AI processing
+  await new Promise((resolve) => setTimeout(resolve, 2000))
+  
+  const categories = ['Pothole', 'Garbage Dump', 'Broken Streetlight', 'Water Leakage']
+  const detected = categories[Math.floor(Math.random() * categories.length)]
+  const confidence = Math.floor(Math.random() * 15) + 85 // 85-99%
+  
+  setAiDetectedCategory(detected)
+  setAiConfidence(confidence)
+  setShowAiConfirmation(true)
+  setAiAnalyzing(false)
+}
+```
+
+**UI Elements**:
+- Loading spinner during analysis
+- Sparkles icon (✨) to indicate AI features
+- Confidence badge showing percentage
+- "Confirm" and "Change" buttons for user control
+
+**User Experience**:
+1. Upload image → AI analyzes automatically
+2. View AI suggestion with confidence score
+3. Confirm to use AI category OR Change to select manually
+4. Category field pre-filled if confirmed
+
+#### 2. AI Report Display (`components/ai-report-display.tsx`)
+
+**Feature**: Comprehensive AI analysis viewer on complaint detail pages
+
+**Props Interface**:
+```typescript
+interface AiReportDisplayProps {
+  aiDetectedCategory?: string
+  aiConfidence?: number
+  assignedDepartment?: string
+  officialSummary?: string
+  aiReport?: string
+}
+```
+
+**Display Sections**:
+1. **AI Detected Issue**: Category with confidence badge
+2. **Assigned Department**: Relevant municipal department
+3. **Official Summary**: High-level issue description
+4. **Detailed Analysis**: Full AI-generated report
+
+**Usage**:
+```tsx
+<AiReportDisplay
+  aiDetectedCategory={complaint.ai_detected_category}
+  aiConfidence={complaint.ai_confidence}
+  assignedDepartment={complaint.assigned_department}
+  officialSummary={complaint.official_summary}
+  aiReport={complaint.ai_report}
+/>
+```
+
+**Styling**: Card-based layout with gradient accents and structured information hierarchy
+
+#### 3. User Feedback System (`components/user-feedback.tsx`)
+
+**Feature**: Allow users to rate and review resolved complaints
+
+**Props Interface**:
+```typescript
+interface UserFeedbackProps {
+  complaintId: string
+  existingRating?: number
+  existingFeedback?: string
+}
+```
+
+**Features**:
+- 5-star rating system (interactive stars)
+- Optional comment textarea
+- Submit button with loading state
+- Shows "Feedback Submitted" when done
+- Satisfaction labels: Poor, Fair, Good, Very Good, Excellent
+
+**Access Control**:
+- Only shown for resolved complaints
+- Only complaint owner can submit feedback
+- One feedback per complaint
+
+**Database Update**:
+```typescript
+const { error } = await supabase
+  .from('complaints')
+  .update({
+    user_rating: rating,
+    user_feedback: feedback || null
+  })
+  .eq('id', complaintId)
+```
+
+#### 4. XAI Placeholder
+
+**Location**: Complaint detail page timeline (for escalated actions)
+
+**Purpose**: Future integration of Explainable AI features
+
+**Current Implementation**:
+```tsx
+<Button
+  variant="outline"
+  size="sm"
+  onClick={() => alert('XAI explanation coming soon!')}
+>
+  <Sparkles className="h-3 w-3 mr-1" />
+  Why was this escalated?
+</Button>
+```
+
+### Admin Dashboard Features
+
+#### 1. Admin Route Group (`app/(admin)/`)
+
+**Structure**:
+```
+app/(admin)/
+├── layout.tsx                    # Admin sidebar layout
+├── admin-dashboard/
+│   └── page.tsx                  # Dashboard with stats
+└── admin-complaints/
+    └── [id]/
+        └── page.tsx              # Complaint detail & management
+```
+
+**Route Naming**: 
+- `/admin-dashboard` - Main admin page
+- `/admin-complaints/[id]` - Individual complaint management
+
+**Why Different Names**: Next.js doesn't allow duplicate route paths across route groups. Admin routes use different names to avoid conflicts with main routes (`/dashboard`, `/complaint/[id]`).
+
+#### 2. Admin Layout (`app/(admin)/layout.tsx`)
+
+**Features**:
+- Sidebar navigation with icons
+- Authentication check (redirects to /login if not authenticated)
+- Role check (MVP: allows all users, ready for production role enforcement)
+- User email display
+- Sign out button
+
+**Navigation Links**:
+- Dashboard (LayoutDashboard icon)
+- Complaints (FileText icon)
+- Settings (Settings icon) - placeholder
+
+**Access Control**:
+```typescript
+useEffect(() => {
+  if (!loading) {
+    if (!user) {
+      router.push("/login")
+    } else if (user.role !== "admin") {
+      // MVP mode: allow all users
+      console.log("Admin access (MVP mode)")
+    }
+  }
+}, [user, loading, router])
+```
+
+#### 3. Admin Dashboard (`app/(admin)/admin-dashboard/page.tsx`)
+
+**Statistics Cards**:
+- Total Complaints
+- Submitted (pending)
+- In Progress
+- Escalated
+- Resolved
+
+**Real-time Data**:
+```typescript
+const stats = {
+  total: allComplaints.length,
+  submitted: allComplaints.filter(c => c.status === 'submitted').length,
+  in_progress: allComplaints.filter(c => c.status === 'in_progress').length,
+  escalated: allComplaints.filter(c => c.status === 'escalated').length,
+  resolved: allComplaints.filter(c => c.status === 'resolved').length,
+}
+```
+
+**Civic Intelligence Section** (Phase 3 Placeholder):
+- Issue Heatmap placeholder
+- Performance Metrics placeholders
+- Designed for future analytics integration
+
+**Complaints Table**:
+- Uses `AdminComplaintsTable` component
+- Shows all complaints with management actions
+
+#### 4. Admin Complaint Detail (`app/(admin)/admin-complaints/[id]/page.tsx`)
+
+**Features**:
+
+**Status Updater**:
+```typescript
+<select
+  value={complaint.status}
+  onChange={async (e) => {
+    const newStatus = e.target.value as Complaint['status']
+    // Update database
+    await supabase
+      .from('complaints')
+      .update({ status: newStatus })
+      .eq('id', params.id)
+    
+    // Create timeline entry
+    await supabase.from('complaint_actions').insert({
+      complaint_id: params.id,
+      action_type: 'status_change',
+      description: `Status updated to ${newStatus}`
+    })
+  }}
+>
+  <option value="submitted">Submitted</option>
+  <option value="in_progress">In Progress</option>
+  <option value="escalated">Escalated</option>
+  <option value="resolved">Resolved</option>
+  <option value="rejected">Rejected</option>
+</select>
+```
+
+**Information Display**:
+- Complaint header with ID
+- Status badge
+- Image preview
+- Description
+- Location details
+- AI Report (if available)
+- User Feedback (if provided)
+- Status Timeline
+- Location Map
+
+**Navigation**:
+- Back button to dashboard
+- Uses `BackButton` component
+
+#### 5. Admin Components
+
+**AdminComplaintsTable** (`components/admin-complaints-table.tsx`):
+
+**Features**:
+- Search functionality (by ID, category, location)
+- Sortable columns
+- Status badges with color coding
+- View button → navigates to detail page
+
+**Columns**:
+- ID
+- Category
+- AI Detection (shows if AI detected)
+- Location
+- Status (with badge)
+- Date
+- Actions (View button)
+
+**Search Implementation**:
+```typescript
+const filteredComplaints = complaints.filter(c =>
+  c.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  c.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  (c.location && c.location.toLowerCase().includes(searchTerm.toLowerCase()))
+)
+```
+
+**Badge Component** (`components/ui/badge.tsx`):
+
+Shadcn-style badge with variants:
+- default (blue)
+- secondary (gray)
+- destructive (red)
+- outline (transparent with border)
+
+**Table Component** (`components/ui/table.tsx`):
+
+Complete table primitives:
+- Table
+- TableHeader
+- TableBody
+- TableFooter
+- TableRow
+- TableHead
+- TableCell
+- TableCaption
+
+All components use `React.forwardRef` with proper TypeScript typing.
+
+### Database Schema Updates
+
+**Complaints Table - New Fields**:
+```sql
+ALTER TABLE complaints ADD COLUMN IF NOT EXISTS ai_detected_category TEXT;
+ALTER TABLE complaints ADD COLUMN IF NOT EXISTS ai_confidence INTEGER;
+ALTER TABLE complaints ADD COLUMN IF NOT EXISTS ai_report TEXT;
+ALTER TABLE complaints ADD COLUMN IF NOT EXISTS assigned_department TEXT;
+ALTER TABLE complaints ADD COLUMN IF NOT EXISTS official_summary TEXT;
+ALTER TABLE complaints ADD COLUMN IF NOT EXISTS user_rating INTEGER;
+ALTER TABLE complaints ADD COLUMN IF NOT EXISTS user_feedback TEXT;
+```
+
+**User Interface - TypeScript**:
+```typescript
+export interface User {
+  id: string
+  email?: string
+  role?: 'user' | 'admin'  // NEW: Role-based access
+}
+
+export interface Complaint {
+  // ... existing fields
+  ai_detected_category?: string     // NEW: AI detected category
+  ai_confidence?: number            // NEW: AI confidence (85-99)
+  ai_report?: string                // NEW: Full AI analysis
+  assigned_department?: string      // NEW: Municipal department
+  official_summary?: string         // NEW: Official description
+  user_rating?: number             // NEW: User rating (1-5)
+  user_feedback?: string           // NEW: User comment
+}
+```
+
+### Navigation Updates
+
+**Navbar** (`components/navbar.tsx`):
+
+Added admin access:
+```tsx
+{user && (
+  <Link href="/admin-dashboard">
+    <Button variant="ghost" size="sm">
+      <Shield className="h-4 w-4 mr-2" />
+      Admin
+    </Button>
+  </Link>
+)}
+```
+
+Present in both desktop and mobile menus.
+
+### Build & Deployment Notes
+
+**Route Conflict Resolution**:
+- Original plan: `/admin/dashboard` conflicted with `/(main)/dashboard`
+- Solution: Renamed to `/admin-dashboard` and `/admin-complaints`
+- All navigation links updated accordingly
+
+**TypeScript Compliance**:
+- Production build successful ✅
+- No critical errors
+- Minor warnings (useEffect deps, img vs Image) - safe to ignore
+
+**Build Command**: `npm run build`
+
+**Vercel Deployment**: Ready - all TypeScript strict mode requirements met
+
+### Testing the New Features
+
+**AI Features**:
+1. Go to /submit
+2. Upload an image
+3. Wait 2 seconds for AI analysis
+4. Confirm or change the AI suggestion
+5. View AI report on complaint detail page
+6. Rate resolved complaints (owner only)
+
+**Admin Features**:
+1. Log in to the application
+2. Click "Admin" in navbar
+3. View dashboard statistics
+4. Search/filter complaints in table
+5. Click "View" on any complaint
+6. Update status using dropdown
+7. View AI reports and user feedback
+8. Check timeline for status changes
+
+### Future Integration Points
+
+**Real AI Model**:
+Replace mock analysis in `complaint-form.tsx` with actual API call:
+```typescript
+const analyzeImageWithAI = async (file: File) => {
+  const formData = new FormData()
+  formData.append('image', file)
+  
+  const response = await fetch('/api/analyze-image', {
+    method: 'POST',
+    body: formData
+  })
+  
+  const { category, confidence, report } = await response.json()
+  // Update state with real data
+}
+```
+
+**Civic Intelligence**:
+- Replace placeholders in admin dashboard
+- Integrate heatmap library (e.g., Leaflet.heat)
+- Add charts (e.g., Chart.js, Recharts)
+- Connect to analytics API
+
+**Explainable AI (XAI)**:
+- Implement decision tree visualization
+- Add SHAP values display
+- Show feature importance
+- Provide natural language explanations
 
 ---
 

@@ -19,6 +19,15 @@ export interface Complaint {
   status: ComplaintStatus
   created_at: string
   updated_at: string
+  // AI-generated fields
+  ai_detected_category?: string
+  ai_confidence?: number
+  ai_report?: string
+  assigned_department?: string
+  official_summary?: string
+  // User feedback fields
+  user_rating?: number
+  user_feedback?: string
 }
 
 export interface ComplaintAction {
@@ -33,4 +42,5 @@ export interface User {
   id: string
   email: string
   created_at: string
+  role?: 'user' | 'admin'
 }

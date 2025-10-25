@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { supabase } from "@/lib/supabase"
-import { Upload, MapPin, FileText, ChevronLeft, ChevronRight } from "lucide-react"
+import { Upload, MapPin, FileText, ChevronLeft, ChevronRight, Sparkles, Check, X } from "lucide-react"
 import dynamic from "next/dynamic"
 
 // Dynamically import the map component to avoid SSR issues with Leaflet
@@ -31,6 +31,7 @@ interface ComplaintFormProps {
 export function ComplaintForm({ onSuccess, onCancel }: ComplaintFormProps) {
   const [currentStep, setCurrentStep] = useState(1)
   const [loading, setLoading] = useState(false)
+  const [aiAnalyzing, setAiAnalyzing] = useState(false)
   const [error, setError] = useState("")
 
   // Form state
@@ -39,10 +40,14 @@ export function ComplaintForm({ onSuccess, onCancel }: ComplaintFormProps) {
   const [latitude, setLatitude] = useState<number>(0)
   const [longitude, setLongitude] = useState<number>(0)
   const [category, setCategory] = useState("")
+  const [aiDetectedCategory, setAiDetectedCategory] = useState("")
+  const [aiConfidence, setAiConfidence] = useState<number>(0)
+  const [showAiConfirmation, setShowAiConfirmation] = useState(false)
+  const [categoryConfirmed, setCategoryConfirmed] = useState(false)
   const [description, setDescription] = useState("")
   const [landmark, setLandmark] = useState("")
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
       setImageFile(file)
@@ -51,7 +56,39 @@ export function ComplaintForm({ onSuccess, onCancel }: ComplaintFormProps) {
         setImagePreview(reader.result as string)
       }
       reader.readAsDataURL(file)
+
+      // Trigger AI analysis
+      setAiAnalyzing(true)
+      try {
+        // Simulate AI analysis (replace with actual API call in production)
+        await new Promise(resolve => setTimeout(resolve, 2000))
+        
+        // Mock AI detection result
+        const detectedCategories = ISSUE_CATEGORIES.filter(cat => cat !== "Other")
+        const randomCategory = detectedCategories[Math.floor(Math.random() * detectedCategories.length)]
+        const confidence = 0.85 + Math.random() * 0.14 // 85-99%
+        
+        setAiDetectedCategory(randomCategory)
+        setAiConfidence(confidence)
+        setShowAiConfirmation(true)
+        setCategory(randomCategory) // Pre-fill with AI detection
+      } catch (error) {
+        console.error("AI analysis failed:", error)
+      } finally {
+        setAiAnalyzing(false)
+      }
     }
+  }
+
+  const handleConfirmAiCategory = () => {
+    setCategoryConfirmed(true)
+    setShowAiConfirmation(false)
+  }
+
+  const handleChangeCategory = () => {
+    setShowAiConfirmation(false)
+    setCategoryConfirmed(false)
+    // User can now manually select category
   }
 
   const getCurrentLocation = () => {
@@ -114,6 +151,8 @@ export function ComplaintForm({ onSuccess, onCancel }: ComplaintFormProps) {
           longitude,
           image_url: imageUrl,
           status: 'submitted',
+          ai_detected_category: aiDetectedCategory || null,
+          ai_confidence: aiConfidence || null,
         })
 
       if (insertError) {
@@ -124,17 +163,22 @@ export function ComplaintForm({ onSuccess, onCancel }: ComplaintFormProps) {
       if (onSuccess) {
         onSuccess()
       }
-    } catch (err: any) {
-      setError(err.message || "Failed to submit complaint")
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to submit complaint"
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }
   }
 
   const canProceed = () => {
-    if (currentStep === 1) return imageFile !== null
+    if (currentStep === 1) return imageFile !== null && !aiAnalyzing
     if (currentStep === 2) return latitude !== 0 && longitude !== 0
-    if (currentStep === 3) return category !== "" && description !== ""
+    if (currentStep === 3) {
+      // Category is optional if AI detected it, description is still required
+      const hasCategory = category !== "" || aiDetectedCategory !== ""
+      return hasCategory && description !== ""
+    }
     return false
   }
 
@@ -168,11 +212,58 @@ export function ComplaintForm({ onSuccess, onCancel }: ComplaintFormProps) {
                     alt="Preview" 
                     className="max-h-64 mx-auto rounded-lg"
                   />
+                  {aiAnalyzing && (
+                    <div className="flex items-center justify-center gap-2 text-primary">
+                      <Sparkles className="h-5 w-5 animate-pulse" />
+                      <p className="text-sm font-medium">AI is analyzing the issue...</p>
+                    </div>
+                  )}
+                  {showAiConfirmation && (
+                    <Card className="border-primary/50 bg-primary/5">
+                      <CardContent className="pt-6">
+                        <div className="space-y-4">
+                          <div className="flex items-start gap-3">
+                            <Sparkles className="h-5 w-5 text-primary mt-0.5" />
+                            <div className="flex-1 text-left">
+                              <p className="font-medium">AI Detection Complete</p>
+                              <p className="text-sm text-muted-foreground mt-1">
+                                Our AI detected a <span className="font-semibold text-foreground">{aiDetectedCategory}</span>
+                                {" "}with {(aiConfidence * 100).toFixed(0)}% confidence.
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button 
+                              onClick={handleConfirmAiCategory}
+                              className="flex-1"
+                              size="sm"
+                            >
+                              <Check className="mr-2 h-4 w-4" />
+                              Confirm
+                            </Button>
+                            <Button 
+                              onClick={handleChangeCategory}
+                              variant="outline"
+                              className="flex-1"
+                              size="sm"
+                            >
+                              <X className="mr-2 h-4 w-4" />
+                              Change Category
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
                   <Button 
                     variant="outline" 
                     onClick={() => {
                       setImageFile(null)
                       setImagePreview("")
+                      setAiDetectedCategory("")
+                      setAiConfidence(0)
+                      setShowAiConfirmation(false)
+                      setCategoryConfirmed(false)
                     }}
                   >
                     Change Image
@@ -194,6 +285,10 @@ export function ComplaintForm({ onSuccess, onCancel }: ComplaintFormProps) {
                       onChange={handleImageChange}
                     />
                   </div>
+                  <p className="text-xs text-muted-foreground">
+                    <Sparkles className="inline h-3 w-3 mr-1" />
+                    Our AI will automatically detect the issue type
+                  </p>
                 </div>
               )}
             </div>
@@ -239,14 +334,30 @@ export function ComplaintForm({ onSuccess, onCancel }: ComplaintFormProps) {
         {/* Step 3: Describe the Issue */}
         {currentStep === 3 && (
           <div className="space-y-4">
+            {aiDetectedCategory && (
+              <div className="p-3 bg-primary/10 border border-primary/20 rounded-lg">
+                <div className="flex items-center gap-2 text-sm">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  <span className="font-medium">AI Detected:</span>
+                  <span>{aiDetectedCategory}</span>
+                  {categoryConfirmed && (
+                    <Check className="h-4 w-4 text-green-600 ml-auto" />
+                  )}
+                </div>
+              </div>
+            )}
             <div className="space-y-2">
-              <Label htmlFor="category">Issue Category</Label>
+              <Label htmlFor="category">
+                Issue Category
+                <span className="text-muted-foreground text-xs ml-2">
+                  (Optional - AI has detected it)
+                </span>
+              </Label>
               <select
                 id="category"
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                required
               >
                 <option value="">Select a category</option>
                 {ISSUE_CATEGORIES.map((cat) => (

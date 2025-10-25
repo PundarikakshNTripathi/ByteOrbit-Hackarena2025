@@ -4,10 +4,14 @@ import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import { supabase, type Complaint, type ComplaintAction } from "@/lib/supabase"
 import { StatusTimeline } from "@/components/status-timeline"
+import { AiReportDisplay } from "@/components/ai-report-display"
+import { UserFeedback } from "@/components/user-feedback"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { BackButton } from "@/components/back-button"
-import { MapPin, Calendar, Tag } from "lucide-react"
+import { MapPin, Calendar, Tag, Brain } from "lucide-react"
 import dynamic from "next/dynamic"
+import { useAuthStore } from "@/lib/store"
 
 const DynamicMap = dynamic(() => import("@/components/map-picker"), { 
   ssr: false,
@@ -20,6 +24,8 @@ export default function ComplaintDetailPage() {
   const [complaint, setComplaint] = useState<Complaint | null>(null)
   const [actions, setActions] = useState<ComplaintAction[]>([])
   const [loading, setLoading] = useState(true)
+  const { user } = useAuthStore()
+  const isOwner = user?.id === complaint?.user_id
 
   useEffect(() => {
     if (complaintId) {
@@ -143,6 +149,9 @@ export default function ComplaintDetailPage() {
           </div>
         </div>
 
+        {/* AI Report */}
+        <AiReportDisplay complaint={complaint} />
+
         <div className="grid gap-8 lg:grid-cols-2">
           {/* Left Column: Details */}
           <div className="space-y-6">
@@ -191,6 +200,16 @@ export default function ComplaintDetailPage() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* User Feedback (only for resolved complaints and owner) */}
+            {complaint.status === 'resolved' && isOwner && (
+              <UserFeedback 
+                complaintId={complaint.id}
+                existingRating={complaint.user_rating}
+                existingFeedback={complaint.user_feedback || ""}
+                onFeedbackSubmitted={() => fetchComplaintDetails()}
+              />
+            )}
           </div>
 
           {/* Right Column: Timeline */}
@@ -204,6 +223,24 @@ export default function ComplaintDetailPage() {
               </CardHeader>
               <CardContent>
                 <StatusTimeline actions={actions} />
+                
+                {/* XAI Placeholder for escalated actions */}
+                {actions.some(action => action.action_type === 'escalated') && (
+                  <div className="mt-6 p-4 border border-dashed border-primary/30 rounded-lg bg-muted/30">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Brain className="h-5 w-5 text-primary" />
+                      <p className="font-medium text-sm">Explainable AI</p>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Understand why this issue was escalated
+                    </p>
+                    <Button disabled variant="outline" size="sm" className="w-full">
+                      <Brain className="mr-2 h-4 w-4" />
+                      Explain Agent&apos;s Decision
+                      <span className="ml-2 text-xs">(Coming Soon)</span>
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

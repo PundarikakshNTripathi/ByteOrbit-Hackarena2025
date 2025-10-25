@@ -13,7 +13,19 @@ create table if not exists complaints (
   latitude decimal not null,
   longitude decimal not null,
   image_url text,
-  status text default 'submitted' check (status in ('submitted', 'in_progress', 'escalated', 'resolved')),
+  status text default 'submitted' check (status in ('submitted', 'in_progress', 'escalated', 'resolved', 'rejected')),
+  
+  -- AI-powered fields
+  ai_detected_category text,
+  ai_confidence integer,
+  ai_report text,
+  assigned_department text,
+  official_summary text,
+  
+  -- User feedback fields
+  user_rating integer check (user_rating >= 1 and user_rating <= 5),
+  user_feedback text,
+  
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
@@ -45,7 +57,7 @@ create index if not exists idx_complaints_created_at on complaints(created_at de
 create table if not exists complaint_actions (
   id uuid default gen_random_uuid() primary key,
   complaint_id uuid references complaints(id) on delete cascade not null,
-  action_type text not null check (action_type in ('submitted', 'emailed', 'email_sent', 'escalated', 'resolved', 'sla_missed', 'follow_up')),
+  action_type text not null check (action_type in ('submitted', 'emailed', 'email_sent', 'escalated', 'resolved', 'rejected', 'sla_missed', 'follow_up', 'status_change', 'in_progress')),
   description text not null,
   metadata jsonb,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
@@ -169,3 +181,42 @@ create trigger update_complaints_updated_at
 -- ) ca on true
 -- order by c.created_at desc
 -- limit 10;
+
+-- ============================================
+-- 7. MIGRATION SCRIPT FOR EXISTING DATABASES
+-- ============================================
+-- If you already have a database set up, run these queries to add new fields:
+
+-- Add AI-powered fields to complaints table
+alter table complaints add column if not exists ai_detected_category text;
+alter table complaints add column if not exists ai_confidence integer;
+alter table complaints add column if not exists ai_report text;
+alter table complaints add column if not exists assigned_department text;
+alter table complaints add column if not exists official_summary text;
+
+-- Add user feedback fields to complaints table
+alter table complaints add column if not exists user_rating integer check (user_rating >= 1 and user_rating <= 5);
+alter table complaints add column if not exists user_feedback text;
+
+-- Update status check constraint to include 'rejected'
+alter table complaints drop constraint if exists complaints_status_check;
+alter table complaints add constraint complaints_status_check 
+  check (status in ('submitted', 'in_progress', 'escalated', 'resolved', 'rejected'));
+
+-- Update action_type check constraint to include new action types
+alter table complaint_actions drop constraint if exists complaint_actions_action_type_check;
+alter table complaint_actions add constraint complaint_actions_action_type_check 
+  check (action_type in ('submitted', 'emailed', 'email_sent', 'escalated', 'resolved', 'rejected', 'sla_missed', 'follow_up', 'status_change', 'in_progress'));
+
+-- ============================================
+-- 8. ADMIN USER SETUP (Optional)
+-- ============================================
+-- Note: User roles are managed in the User interface TypeScript type
+-- For production, you would want to create a separate admin_users table or use Supabase Auth metadata
+
+-- Example: Update a user's metadata to make them an admin (run in Supabase Dashboard or via API)
+-- This is pseudocode - actual implementation depends on your auth setup:
+-- update auth.users 
+-- set raw_app_meta_data = raw_app_meta_data || '{"role": "admin"}'::jsonb
+-- where email = 'admin@example.com';
+
