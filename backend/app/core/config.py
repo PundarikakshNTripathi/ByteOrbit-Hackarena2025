@@ -37,7 +37,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 43200  # 30 days for hackathon testing
     
     # CORS Settings (accepts JSON string or list)
-    BACKEND_CORS_ORIGINS: str = '["http://localhost:3000","http://127.0.0.1:3000"]'
+    BACKEND_CORS_ORIGINS: str = '["http://localhost:3000","http://localhost:3001","https://civicagent.vercel.app"]'
     
     @property
     def CORS_ORIGINS(self) -> List[str]:
@@ -46,7 +46,7 @@ class Settings(BaseSettings):
             try:
                 return json.loads(self.BACKEND_CORS_ORIGINS)
             except:
-                return ["http://localhost:3000", "http://127.0.0.1:3000"]
+                return ["http://localhost:3000", "http://localhost:3001", "https://civicagent.vercel.app"]
         return self.BACKEND_CORS_ORIGINS
     
     # Scheduler Settings
