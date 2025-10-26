@@ -84,9 +84,9 @@ export function MapView({ complaints }: MapViewProps) {
       // Create popup content
       const popupContent = `
         <div style="min-width: 200px;">
-          <h3 style="font-weight: bold; margin-bottom: 8px; color: #1f2937;">${complaint.category}</h3>
+          <h3 style="font-weight: bold; margin-bottom: 8px; color: #1f2937;">${complaint.category || 'Issue'}</h3>
           ${complaint.image_url ? `<img src="${complaint.image_url}" alt="Issue" style="width: 100%; height: 120px; object-fit: cover; border-radius: 4px; margin-bottom: 8px;" />` : ""}
-          <p style="color: #6b7280; font-size: 14px; margin-bottom: 8px;">${complaint.description.substring(0, 100)}${complaint.description.length > 100 ? "..." : ""}</p>
+          <p style="color: #6b7280; font-size: 14px; margin-bottom: 8px;">${(complaint.user_description || complaint.description || 'No description').substring(0, 100)}${(complaint.user_description || complaint.description || '').length > 100 ? "..." : ""}</p>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
             <span style="font-size: 12px; padding: 2px 8px; background-color: ${getMarkerColor(complaint.status)}; color: white; border-radius: 4px; text-transform: capitalize;">${complaint.status.replace(/_/g, " ")}</span>
             <a href="/complaint/${complaint.id}" style="color: #3b82f6; font-size: 14px; text-decoration: none; font-weight: 500;">View Details →</a>

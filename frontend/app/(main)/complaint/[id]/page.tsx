@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useParams } from "next/navigation"
 import { supabase, type Complaint, type ComplaintAction } from "@/lib/supabase"
 import { StatusTimeline } from "@/components/status-timeline"
@@ -12,6 +12,7 @@ import { BackButton } from "@/components/back-button"
 import { MapPin, Calendar, Tag, Brain } from "lucide-react"
 import dynamic from "next/dynamic"
 import { useAuthStore } from "@/lib/store"
+import Image from "next/image"
 
 const DynamicMap = dynamic(() => import("@/components/map-picker"), { 
   ssr: false,
@@ -27,13 +28,7 @@ export default function ComplaintDetailPage() {
   const { user } = useAuthStore()
   const isOwner = user?.id === complaint?.user_id
 
-  useEffect(() => {
-    if (complaintId) {
-      fetchComplaintDetails()
-    }
-  }, [complaintId])
-
-  const fetchComplaintDetails = async () => {
+  const fetchComplaintDetails = useCallback(async () => {
     setLoading(true)
     try {
       // Fetch complaint details
@@ -72,7 +67,13 @@ export default function ComplaintDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [complaintId])
+
+  useEffect(() => {
+    if (complaintId) {
+      fetchComplaintDetails()
+    }
+  }, [complaintId, fetchComplaintDetails])
 
   const getStatusBadge = (status: string) => {
     const styles = {
@@ -162,11 +163,15 @@ export default function ComplaintDetailPage() {
                   <CardTitle>Evidence Photo</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <img
-                    src={complaint.image_url}
-                    alt="Issue evidence"
-                    className="w-full h-auto rounded-lg"
-                  />
+                  <div className="relative aspect-video w-full overflow-hidden rounded-lg">
+                    <Image
+                      src={complaint.image_url}
+                      alt="Issue evidence"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                  </div>
                 </CardContent>
               </Card>
             )}
@@ -177,7 +182,7 @@ export default function ComplaintDetailPage() {
                 <CardTitle>Description</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">{complaint.description}</p>
+                <p className="text-muted-foreground">{complaint.user_description || complaint.description || 'No description provided'}</p>
               </CardContent>
             </Card>
 

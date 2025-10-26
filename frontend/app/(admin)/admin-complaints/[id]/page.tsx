@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { supabase, type Complaint, type ComplaintAction } from "@/lib/supabase"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -11,6 +11,7 @@ import { BackButton } from "@/components/back-button"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Calendar, Tag, RefreshCw } from "lucide-react"
 import dynamic from "next/dynamic"
+import Image from "next/image"
 
 const DynamicMap = dynamic(() => import("@/components/map-picker"), { 
   ssr: false,
@@ -28,13 +29,7 @@ export default function AdminComplaintDetail() {
   const [updating, setUpdating] = useState(false)
   const [newStatus, setNewStatus] = useState("")
 
-  useEffect(() => {
-    if (complaintId) {
-      fetchComplaintDetails()
-    }
-  }, [complaintId])
-
-  const fetchComplaintDetails = async () => {
+  const fetchComplaintDetails = useCallback(async () => {
     setLoading(true)
     try {
       const { data: complaintData, error: complaintError } = await supabase
@@ -71,7 +66,13 @@ export default function AdminComplaintDetail() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [complaintId])
+
+  useEffect(() => {
+    if (complaintId) {
+      fetchComplaintDetails()
+    }
+  }, [complaintId, fetchComplaintDetails])
 
   const handleStatusUpdate = async () => {
     if (!complaint || !newStatus || newStatus === complaint.status) return
@@ -149,14 +150,14 @@ export default function AdminComplaintDetail() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center space-y-4">
         <p className="text-muted-foreground">Complaint not found</p>
-        <BackButton href="/admin-dashboard" label="Back to Dashboard" />
+        <BackButton href="/public-monitoring" label="Back to Dashboard" />
       </div>
     )
   }
 
   return (
     <div className="p-8 space-y-8 max-w-7xl mx-auto">
-      <BackButton href="/admin-dashboard" label="Back to Dashboard" />
+      <BackButton href="/public-monitoring" label="Back to Dashboard" />
 
       {/* Header */}
       <div className="flex items-start justify-between">
@@ -241,11 +242,15 @@ export default function AdminComplaintDetail() {
                 <CardTitle>Evidence Photo</CardTitle>
               </CardHeader>
               <CardContent>
-                <img
-                  src={complaint.image_url}
-                  alt="Complaint evidence"
-                  className="w-full rounded-lg"
-                />
+                <div className="relative aspect-video w-full overflow-hidden rounded-lg">
+                  <Image
+                    src={complaint.image_url}
+                    alt="Complaint evidence"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
               </CardContent>
             </Card>
           )}
@@ -257,7 +262,7 @@ export default function AdminComplaintDetail() {
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground leading-relaxed">
-                {complaint.description}
+                {complaint.user_description || complaint.description || 'No description provided'}
               </p>
             </CardContent>
           </Card>

@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { supabase } from "@/lib/supabase"
 import { Upload, MapPin, FileText, ChevronLeft, ChevronRight, Sparkles, Check, X } from "lucide-react"
 import dynamic from "next/dynamic"
+import Image from "next/image"
 
 // Dynamically import the map component to avoid SSR issues with Leaflet
 const DynamicMap = dynamic(() => import("./map-picker"), { ssr: false })
@@ -139,25 +140,39 @@ export function ComplaintForm({ onSuccess, onCancel }: ComplaintFormProps) {
         imageUrl = publicUrl
       }
 
-      // Insert complaint into database
-      const { error: insertError } = await supabase
+      // Insert complaint into database - ONLY send fields that MUST exist
+      const complaintData: Record<string, any> = {
+        user_id: user.id,
+        location: `POINT(${longitude} ${latitude})`,
+        image_url: imageUrl,
+        user_description: description,
+      }
+
+      // Add optional fields only if they have values
+      if (latitude) complaintData.latitude = latitude
+      if (longitude) complaintData.longitude = longitude
+      if (landmark) complaintData.landmark = landmark
+      if (category || aiDetectedCategory) {
+        complaintData.category = category || aiDetectedCategory
+      }
+      if (aiDetectedCategory) {
+        complaintData.ai_detected_category = aiDetectedCategory
+      }
+
+      console.log('Submitting complaint with data:', complaintData)
+
+      const { data: insertedData, error: insertError } = await supabase
         .from('complaints')
-        .insert({
-          user_id: user.id,
-          category,
-          description,
-          landmark,
-          latitude,
-          longitude,
-          image_url: imageUrl,
-          status: 'submitted',
-          ai_detected_category: aiDetectedCategory || null,
-          ai_confidence: aiConfidence || null,
-        })
+        .insert(complaintData)
+        .select()
 
       if (insertError) {
-        throw insertError
+        console.error('Insert error:', insertError)
+        console.error('Complaint data sent:', complaintData)
+        throw new Error(insertError.message || 'Failed to insert complaint into database')
       }
+
+      console.log('Complaint submitted successfully:', insertedData)
 
       // Success!
       if (onSuccess) {
@@ -175,9 +190,8 @@ export function ComplaintForm({ onSuccess, onCancel }: ComplaintFormProps) {
     if (currentStep === 1) return imageFile !== null && !aiAnalyzing
     if (currentStep === 2) return latitude !== 0 && longitude !== 0
     if (currentStep === 3) {
-      // Category is optional if AI detected it, description is still required
-      const hasCategory = category !== "" || aiDetectedCategory !== ""
-      return hasCategory && description !== ""
+      // Only require description - category and landmark are optional
+      return description.trim() !== ""
     }
     return false
   }
@@ -207,11 +221,16 @@ export function ComplaintForm({ onSuccess, onCancel }: ComplaintFormProps) {
             <div className="border-2 border-dashed rounded-lg p-8 text-center">
               {imagePreview ? (
                 <div className="space-y-4">
-                  <img 
-                    src={imagePreview} 
-                    alt="Preview" 
-                    className="max-h-64 mx-auto rounded-lg"
-                  />
+                  <div className="relative mx-auto h-64 w-full max-w-2xl overflow-hidden rounded-lg">
+                    <Image
+                      src={imagePreview}
+                      alt="Preview"
+                      fill
+                      className="object-contain"
+                      sizes="(max-width: 1024px) 100vw, 640px"
+                      unoptimized
+                    />
+                  </div>
                   {aiAnalyzing && (
                     <div className="flex items-center justify-center gap-2 text-primary">
                       <Sparkles className="h-5 w-5 animate-pulse" />
@@ -255,6 +274,25 @@ export function ComplaintForm({ onSuccess, onCancel }: ComplaintFormProps) {
                       </CardContent>
                     </Card>
                   )}
+                  {!showAiConfirmation && !categoryConfirmed && imagePreview && (
+                    <div className="space-y-2">
+                      <Label htmlFor="category-select">Select Issue Category</Label>
+                      <select
+                        id="category-select"
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                        value={category}
+                        onChange={(e) => {
+                          setCategory(e.target.value)
+                          setCategoryConfirmed(true)
+                        }}
+                      >
+                        <option value="">Select a category...</option>
+                        {ISSUE_CATEGORIES.map((cat) => (
+                          <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
                   <Button 
                     variant="outline" 
                     onClick={() => {
@@ -264,32 +302,34 @@ export function ComplaintForm({ onSuccess, onCancel }: ComplaintFormProps) {
                       setAiConfidence(0)
                       setShowAiConfirmation(false)
                       setCategoryConfirmed(false)
+                      setCategory("")
                     }}
                   >
                     Change Image
                   </Button>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <Label 
+                  htmlFor="image" 
+                  className="cursor-pointer block space-y-4"
+                >
                   <Upload className="h-12 w-12 mx-auto text-muted-foreground" />
                   <div>
-                    <Label htmlFor="image" className="cursor-pointer">
-                      <span className="text-primary hover:underline">Upload a photo</span>
-                      <span className="text-muted-foreground"> or drag and drop</span>
-                    </Label>
-                    <Input
-                      id="image"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleImageChange}
-                    />
+                    <span className="text-primary hover:underline">Upload a photo</span>
+                    <span className="text-muted-foreground"> or drag and drop</span>
                   </div>
                   <p className="text-xs text-muted-foreground">
                     <Sparkles className="inline h-3 w-3 mr-1" />
                     Our AI will automatically detect the issue type
                   </p>
-                </div>
+                  <Input
+                    id="image"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageChange}
+                  />
+                </Label>
               )}
             </div>
           </div>
@@ -348,10 +388,7 @@ export function ComplaintForm({ onSuccess, onCancel }: ComplaintFormProps) {
             )}
             <div className="space-y-2">
               <Label htmlFor="category">
-                Issue Category
-                <span className="text-muted-foreground text-xs ml-2">
-                  (Optional - AI has detected it)
-                </span>
+                Issue Category (Optional)
               </Label>
               <select
                 id="category"
@@ -359,7 +396,7 @@ export function ComplaintForm({ onSuccess, onCancel }: ComplaintFormProps) {
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               >
-                <option value="">Select a category</option>
+                <option value="">Auto-detect from image</option>
                 {ISSUE_CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>
                     {cat}
@@ -368,7 +405,7 @@ export function ComplaintForm({ onSuccess, onCancel }: ComplaintFormProps) {
               </select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="landmark">Nearby Landmark</Label>
+              <Label htmlFor="landmark">Nearby Landmark (Optional)</Label>
               <Input
                 id="landmark"
                 placeholder="e.g., Near City Park"
@@ -377,7 +414,7 @@ export function ComplaintForm({ onSuccess, onCancel }: ComplaintFormProps) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="description">Detailed Description</Label>
+              <Label htmlFor="description">Detailed Description *</Label>
               <textarea
                 id="description"
                 className="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"

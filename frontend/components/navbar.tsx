@@ -1,17 +1,21 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { MapPin, FileText, LayoutDashboard, LogIn, UserPlus, Menu, X, Shield } from 'lucide-react';
+import Image from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
+import { MapPin, FileText, LayoutDashboard, LogIn, UserPlus, Menu, X, Shield, ArrowLeft, ArrowRight, Bell } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/lib/store';
 import { useState } from 'react';
+import { NotificationsModal } from '@/components/notifications-modal';
 
 export function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { user, signOut } = useAuthStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
 
   const navItems = [
     { href: '/', label: 'Home', icon: MapPin },
@@ -20,19 +24,52 @@ export function Navbar() {
   ];
 
   const isActive = (href: string) => pathname === href;
+  const isHomePage = pathname === '/';
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
-        {/* Logo */}
-        <div className="flex items-center gap-6">
+        {/* Navigation Arrows & Logo */}
+        <div className="flex items-center gap-3">
+          {/* Browser Navigation - Hidden on homepage */}
+          {!isHomePage && (
+            <div className="flex items-center gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => router.back()}
+                className="h-8 w-8"
+                title="Go back"
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => router.forward()}
+                className="h-8 w-8"
+                title="Go forward"
+              >
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
+
           <Link href="/" className="flex items-center space-x-2">
-            <MapPin className="h-6 w-6 text-primary" />
+            <div className="relative h-8 w-8">
+              <Image
+                src="/favicon.png"
+                alt="CivicAgent Logo"
+                width={32}
+                height={32}
+                className="object-contain"
+              />
+            </div>
             <span className="font-bold text-xl">CivicAgent</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex gap-6">
+          <nav className="hidden md:flex gap-6 ml-4">
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -49,19 +86,39 @@ export function Navbar() {
         </div>
 
         {/* Desktop Auth & Theme */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-2">
+          {user && (
+            <>
+              {/* Notifications */}
+              <div className="relative">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  title="Notifications"
+                  onClick={() => setNotificationsOpen(true)}
+                >
+                  <Bell className="h-5 w-5" />
+                  <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
+                </Button>
+              </div>
+            </>
+          )}
+
           <ThemeToggle />
+          
           {user ? (
             <div className="flex items-center gap-2">
-              <Link href="/admin-dashboard">
+              <Link href="/public-monitoring">
                 <Button variant="ghost" size="sm">
                   <Shield className="h-4 w-4 mr-2" />
-                  Admin
+                  Public Monitoring
                 </Button>
               </Link>
-              <span className="text-sm text-muted-foreground hidden lg:inline">
-                {user.email}
-              </span>
+              <Link href="/profile">
+                <Button variant="outline" size="sm">
+                  Profile
+                </Button>
+              </Link>
               <Button variant="outline" size="sm" onClick={() => signOut()}>
                 Sign Out
               </Button>
@@ -128,10 +185,10 @@ export function Navbar() {
                   <div className="px-3 py-2 text-sm text-muted-foreground">
                     {user.email}
                   </div>
-                  <Link href="/admin-dashboard" onClick={() => setMobileMenuOpen(false)}>
+                  <Link href="/public-monitoring" onClick={() => setMobileMenuOpen(false)}>
                     <Button variant="ghost" className="w-full justify-start mb-2">
                       <Shield className="h-4 w-4 mr-2" />
-                      Admin
+                      Public Monitoring
                     </Button>
                   </Link>
                   <Button
@@ -165,6 +222,9 @@ export function Navbar() {
           </nav>
         </div>
       )}
+
+      {/* Modals */}
+      <NotificationsModal isOpen={notificationsOpen} onClose={() => setNotificationsOpen(false)} />
     </header>
   );
 }

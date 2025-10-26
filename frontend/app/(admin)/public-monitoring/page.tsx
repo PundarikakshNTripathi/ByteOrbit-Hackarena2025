@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import { supabase, type Complaint } from "@/lib/supabase"
-
 import { AdminComplaintsTable } from "@/components/admin-complaints-table"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { FileText, CheckCircle, Clock, AlertTriangle, TrendingUp, Map } from "lucide-react"

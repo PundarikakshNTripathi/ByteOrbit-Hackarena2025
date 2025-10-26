@@ -10,11 +10,13 @@ export type ComplaintStatus = 'submitted' | 'in_progress' | 'escalated' | 'resol
 export interface Complaint {
   id: string
   user_id: string
-  category: string
-  description: string
-  landmark: string
+  category?: string
+  user_description?: string  // Actual DB field
+  description?: string        // Kept for backward compatibility
+  landmark?: string
   latitude: number
   longitude: number
+  location?: string           // Geography point as WKT string
   image_url?: string
   status: ComplaintStatus
   created_at: string

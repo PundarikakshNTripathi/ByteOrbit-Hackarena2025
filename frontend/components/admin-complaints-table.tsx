@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import { Eye, Sparkles } from "lucide-react"
+import { Eye, Sparkles, X } from "lucide-react"
 
 /**
  * Local Badge replacement for missing '@/components/ui/badge'.
@@ -49,13 +49,43 @@ interface AdminComplaintsTableProps {
 export function AdminComplaintsTable({ complaints }: AdminComplaintsTableProps) {
   const router = useRouter()
   const [searchTerm, setSearchTerm] = useState("")
+  const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [categoryFilter, setCategoryFilter] = useState<string>("all")
 
-  const filteredComplaints = complaints.filter(
-    (c) =>
-      c.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.id.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  // Predefined categories - show all common civic complaint types
+  const allCategories = [
+    "Pothole",
+    "Street Light",
+    "Garbage Collection",
+    "Water Supply",
+    "Drainage",
+    "Road Repair",
+    "Tree Cutting",
+    "Noise Pollution",
+    "Air Pollution",
+    "Illegal Construction",
+    "Public Transport",
+    "Traffic Signal",
+    "Parking Issue",
+    "Other"
+  ]
+
+  // Get unique categories from complaints and merge with predefined
+  const complaintCategories = Array.from(new Set(complaints.map(c => c.category || c.ai_detected_category).filter(Boolean)))
+  const categories = Array.from(new Set([...complaintCategories, ...allCategories]))
+
+  const filteredComplaints = complaints.filter((c) => {
+    const matchesSearch = 
+      c.category?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.user_description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      String(c.id).toLowerCase().includes(searchTerm.toLowerCase())
+    
+    const matchesStatus = statusFilter === "all" || c.status === statusFilter
+    const matchesCategory = categoryFilter === "all" || c.category === categoryFilter || c.ai_detected_category === categoryFilter
+
+    return matchesSearch && matchesStatus && matchesCategory
+  })
 
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
@@ -82,15 +112,61 @@ export function AdminComplaintsTable({ complaints }: AdminComplaintsTableProps) 
 
   return (
     <div className="space-y-4">
-      {/* Search */}
-      <div className="flex items-center gap-4">
+      {/* Search and Filters */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
         <input
           type="text"
           placeholder="Search complaints..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="flex h-10 w-full max-w-sm rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="flex-1 px-3 py-2 border rounded-md text-sm"
         />
+        
+        {/* Status Filter */}
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="px-3 py-2 border rounded-md text-sm bg-background min-w-[140px]"
+        >
+          <option value="all">All Status</option>
+          <option value="submitted">Submitted</option>
+          <option value="in_progress">In Progress</option>
+          <option value="escalated">Escalated</option>
+          <option value="resolved">Resolved</option>
+        </select>
+
+        {/* Category Filter */}
+        <select
+          value={categoryFilter}
+          onChange={(e) => setCategoryFilter(e.target.value)}
+          className="px-3 py-2 border rounded-md text-sm bg-background min-w-[140px]"
+        >
+          <option value="all">All Categories</option>
+          {categories.map((cat) => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
+
+        {/* Clear Filters */}
+        {(statusFilter !== "all" || categoryFilter !== "all" || searchTerm) && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setStatusFilter("all")
+              setCategoryFilter("all")
+              setSearchTerm("")
+            }}
+          >
+            <X className="h-4 w-4 mr-1" />
+            Clear
+          </Button>
+        )}
+      </div>
+
+      {/* Results count */}
+      <div className="text-sm text-muted-foreground">
+        Showing {filteredComplaints.length} of {complaints.length} complaints
       </div>
 
       {/* Table */}
@@ -118,7 +194,7 @@ export function AdminComplaintsTable({ complaints }: AdminComplaintsTableProps) 
               filteredComplaints.map((complaint) => (
                 <TableRow key={complaint.id}>
                   <TableCell className="font-mono text-xs">
-                    {complaint.id.substring(0, 8)}...
+                    {String(complaint.id).substring(0, 8)}...
                   </TableCell>
                   <TableCell className="font-medium">{complaint.category}</TableCell>
                   <TableCell>

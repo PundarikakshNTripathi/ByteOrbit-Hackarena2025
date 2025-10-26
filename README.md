@@ -1,747 +1,301 @@
-# CivicAgent - AI-Powered Civic Engagement Platform# CivicAgent - Hackarena 2025 Project
+Copyright (c) 2025 This project is licensed under the CC BY-NC-ND 4.0 license. See the LICENSE file for details.
 
+<!-- Frontend -->
+[![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![shadcn/ui](https://img.shields.io/badge/shadcn/ui-18181B?style=for-the-badge)](https://ui.shadcn.com/)
+[![Leaflet](https://img.shields.io/badge/Leaflet-199900?style=for-the-badge&logo=leaflet&logoColor=white)](https://leafletjs.com/)
 
+<!-- Backend -->
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Python 3.11](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/downloads/release/python-3110/)
+[![Pydantic](https://img.shields.io/badge/Pydantic-3775A9?style=for-the-badge)](https://docs.pydantic.dev/latest/)
+[![APScheduler](https://img.shields.io/badge/APScheduler-1F2933?style=for-the-badge)](https://apscheduler.readthedocs.io/en/stable/)
+[![Supabase Py](https://img.shields.io/badge/Supabase_Py-3ECF8E?style=for-the-badge&logo=supabase&logoColor=1F1F1F)](https://supabase.com/docs/reference/python/introduction)
 
-**Hackarena 2025 Project** | Team ByteOrbit## 🎯 Project Summary
+<!-- AI & Analytics -->
+[![Google Gemini](https://img.shields.io/badge/Google_Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/gemini-api)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white)](https://scikit-learn.org/stable/)
+[![SHAP](https://img.shields.io/badge/SHAP-8A2BE2?style=for-the-badge)](https://shap.readthedocs.io/en/latest/)
 
+<!-- Infrastructure & Services -->
+[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=1F1F1F)](https://supabase.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Brevo](https://img.shields.io/badge/Brevo-0C5C9C?style=for-the-badge&logo=maildotru&logoColor=white)](https://www.brevo.com/)
 
+# CivicAgent - AI-Powered Civic Engagement Platform
 
----**CivicAgent** is an AI-powered civic engagement platform that enables citizens to report and track municipal issues (potholes, garbage dumps, broken streetlights, etc.) with complete transparency. The system automatically follows up with local authorities and escalates issues when necessary, ensuring timely resolution.
+> Give citizens, administrators, and municipal teams a shared, transparent workspace for reporting, triaging, and resolving civic infrastructure issues in real time.
 
+CivicAgent unifies AI-assisted complaint filing, transparent public monitoring, and automated government follow-up into one cohesive platform. Residents can submit issues with photo evidence and precise map coordinates (including autocomplete search), administrators get actionable analytics, and the system takes care of escalations, emails, and SLA tracking.
 
+---
 
-## 🎯 Overview## 🌟 Key Features
+## Table of Contents
+- [Overview](#overview)
+- [Unique Value Proposition](#unique-value-proposition)
+- [Architecture & Workflow](#architecture--workflow)
+- [Feature Highlights](#feature-highlights)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Setup & Installation](#setup--installation)
+  - [Prerequisites](#prerequisites)
+  - [Backend Setup](#backend-setup)
+  - [Frontend Setup](#frontend-setup)
+- [Configuration](#configuration)
+- [Running Locally](#running-locally)
+- [Troubleshooting & Known Issues](#troubleshooting--known-issues)
+- [Future Roadmap](#future-roadmap)
+- [License](#license)
 
+---
 
+## Overview
+CivicAgent is the ByteOrbit Hackarena 2025 submission built to shorten the feedback loop between citizens and municipal departments. It combines a Next.js 14 frontend, FastAPI backend, Supabase persistence, and Google Gemini-based AI services to classify issues, recommend next actions, and keep every stakeholder informed.
 
-**CivicAgent** is an AI-powered civic engagement platform that enables citizens to report and track municipal issues with complete transparency. The system uses artificial intelligence to automatically categorize complaints, provides comprehensive admin tools, and ensures timely resolution.### 🏠 Featured on Homepage
+The latest sprint introduced:
+- Location search with intelligent suggestions before dropping a map pin.
+- Streamlined complaint filters and dashboards for advanced public monitoring.
+- Hardened schema alignment across Supabase and the application models.
+- Navigation improvements (breadcrumbs, back/forward, quick access sidebar) for faster reviews.
 
-All AI and Admin features are now prominently showcased on the landing page with:
+---
 
-### What Makes It Special- **"Now with AI-Powered Analysis"** badge
+## Unique Value Proposition
+| CivicAgent | Swachhata App | I Make My City |
+| --- | --- | --- |
+| **AI triage**: Gemini Vision auto-detects categories, severity, and recommended departments. | Manual category selection; limited guidance. | Manual entry; no automated analysis. |
+| **Transparency-first**: Public monitoring dashboard with real-time status timeline and SLA tracking. | Status updates limited to reporter; public insight minimal. | Primarily a submission portal without public dashboards. |
+| **Autonomous follow-ups**: Scheduler-driven email nudges, escalations, and SLA breach detection. | Requires manual follow-up by complainant. | No automated escalation workflow. |
+| **Explainable AI**: SHAP-backed decision model for audit trails and trust. | No AI explainability features. | No AI capability. |
+| **Map-first UX**: Hybrid of GPS, manual pinning, and text search with nearby suggestions. | GPS only; hard to correct incorrect coordinates. | Manual text entry only. |
 
-- **Dedicated AI features section** with 4 feature cards
+These differentiators produce a citizen experience that feels modern while giving administrators confidence that nothing slips through.
 
-- 🤖 **AI-Powered**: Automatic issue detection and categorization from uploaded images (85-99% confidence)- **Clear authentication requirements** (lock icons + notices)
+---
 
-- 🛡️ **Admin Dashboard**: Real-time statistics and complaint management- **"NEW" badges** on all AI features
+## Architecture & Workflow
 
-- ⭐ **User Feedback**: 5-star rating system for resolved issues- **Call-to-action** encouraging users to sign up
+```mermaid
+graph TB
+    subgraph Frontend[Frontend Layer - Next.js 14]
+        A[Citizen & Admin UI]
+        B[Leaflet Map]
+        C[Supabase Client]
+    end
+    
+    subgraph Backend[Backend Services - FastAPI]
+        D[REST API]
+        E[APScheduler]
+        F[ML Decision Model]
+    end
+    
+    subgraph Database[Supabase Platform]
+        G[(PostgreSQL)]
+        H[(Object Storage)]
+        I[(Auth)]
+    end
+    
+    subgraph External[External Services]
+        J[Google Gemini AI]
+        K[Brevo Email]
+    end
+    
+    A -->|Submit| D
+    B -->|Location| D
+    C <-->|Sync| G
+    D --> G
+    D --> H
+    D --> I
+    D --> J
+    D --> F
+    E -->|SLA Check| G
+    E -->|Notify| K
+    F -->|Results| G
+    J -->|Analysis| F
+    K -.->|Email| A
+    
+    style Frontend fill:#0ea5e9,stroke:#38bdf8,stroke-width:3px,color:#fff
+    style Backend fill:#10b981,stroke:#34d399,stroke-width:3px,color:#fff
+    style Database fill:#8b5cf6,stroke:#a78bfa,stroke-width:3px,color:#fff
+    style External fill:#f59e0b,stroke:#fbbf24,stroke-width:3px,color:#fff
+```
 
-- 🗺️ **Interactive Maps**: Visual representation of all civic issues
+---
 
-- 📊 **Complete Transparency**: Public tracking of all complaints and resolutions### For Citizens
+## Feature Highlights
+- **Citizen Experience**
+  - Guided, multi-step complaint form with AI-generated category suggestions.
+  - Leaflet map with GPS auto-detect, manual pin drag, and Nominatim-powered search suggestions.
+  - Visual timeline of submission, assignment, and resolution metadata, plus post-resolution feedback.
+- **Advanced Public Monitoring**
+  - Live metrics by status, category, and SLA compliance available to every visitor.
+  - Filterable complaint table with text search, status/category pickers, and quick ID selectors.
+  - Responsive layout with consolidated navigation, theme toggle, and back/forward shortcuts.
+- **Automation & Intelligence**
+  - Google Gemini Vision summarises uploads with confidence scores, detected objects, and severity.
+  - APScheduler orchestrates follow-ups, escalations, and email nudges via Brevo.
+  - SHAP-powered explanations expose the factors influencing escalation recommendations.
 
-- 📸 **Easy Reporting**: Multi-step form with image upload and GPS location
+---
 
----- 🤖 **AI-Powered Analysis**: Automatic issue detection and categorization from uploaded images
+## Tech Stack
+- **Frontend:** Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS, shadcn/ui, Leaflet.
+- **Backend:** FastAPI, Pydantic v2, Supabase Python client, APScheduler.
+- **AI & Analytics:** Google Gemini (Vision + Pro), scikit-learn, SHAP.
+- **Infrastructure & Services:** Supabase (PostgreSQL + Auth + Storage), Brevo (Sendinblue).
 
-- 🗺️ **Interactive Dashboard**: View all reported issues on a map
+---
 
-## 🌟 Key Features- 📊 **Status Tracking**: Real-time timeline showing resolution progress
-
-- ⭐ **User Feedback**: Rate and review resolved complaints
-
-### For Citizens- 🌙 **Modern Interface**: Beautiful, responsive design with dark mode
-
-- 🔐 **Secure Authentication**: Email-based signup and login
-
-**AI-Powered Submission**
-
-- Upload image → AI detects issue category automatically### For Administrators
-
-- Smart categorization with confidence scores (85-99%)- 🛡️ **Admin Dashboard**: Comprehensive overview with real-time statistics
-
-- Confirm or change AI suggestions- 📋 **Complaint Management**: Search, filter, and update complaint status
-
-- Multi-step guided form (Image → Location → Description)- 🤖 **AI Reports**: View detailed AI analysis and categorization
-
-- 📊 **Analytics Placeholders**: Ready for Civic Intelligence integration (Phase 3)
-
-**Tracking & Feedback**- ⚡ **Status Updates**: Quick status changes with automatic timeline tracking
-
-- Interactive dashboard with all issues on a map
-
-- Real-time status timeline## 📁 Repository Structure
-
-- Rate resolved complaints (5-star system)
-
-- Add feedback comments```
-
+## Project Structure
+```
 ByteOrbit-Hackarena2025/
+├── README.md
+├── LICENSE
+├── backend/
+│   ├── app/
+│   │   ├── api/                  # REST endpoints
+│   │   ├── core/                 # Config and security helpers
+│   │   ├── db/                   # Supabase models and client
+│   │   ├── schemas/              # Pydantic models
+│   │   └── services/             # AI, email, workflow logic
+│   ├── database_schema_backend.sql
+│   ├── requirements.txt
+│   ├── start-backend.ps1
+│   └── storage_policies.sql
+├── frontend/
+│   ├── app/                      # Next.js route groups
+│   ├── components/               # UI and feature components
+│   ├── lib/                      # Client utilities (Supabase store, config)
+│   ├── public/                   # Static assets
+│   ├── package.json
+│   ├── tailwind.config.ts
+│   └── tsconfig.json
+├── backend/BACKEND_DOCUMENTATION.md
+└── FRONTEND_DOCUMENTATION.md
+```
 
-**User Experience**└── frontend/                    # Next.js Web Application
+---
 
-- Modern, responsive design (mobile-first)    ├── app/                     # App Router pages
+## Setup & Installation
+### Prerequisites
+- Node.js 20.x and npm 10+
+- Python 3.11 (required for the backend services)
+- Supabase project (PostgreSQL + Auth + Storage) with a public bucket for complaint evidence
+- Google Gemini API key with access to Vision and Pro models
+- Brevo (Sendinblue) transactional email API key
 
-- Dark/light mode support    ├── components/              # React components
+### Backend Setup
+1. **Verify your Python version**
+   ```powershell
+   python --version
+   ```
+   Ensure it reports Python 3.11.x. If not, install Python 3.11 before continuing.
 
-- GPS auto-detection    ├── lib/                     # Utilities and helpers
+2. **Create a virtual environment (choose one method)**
+   - **Conda**
+     ```powershell
+     conda create -n civicagent python=3.11
+     conda activate civicagent
+     ```
+   - **venv (built-in)**
+     ```powershell
+     python -m venv .venv
+     .\.venv\Scripts\activate
+     ```
+   - **uv (fast Python package manager)**
+     ```powershell
+     uv venv --python 3.11
+     .\.venv\Scripts\activate
+     ```
 
-- Secure authentication    ├── public/                  # Static assets
-
-    ├── FRONTEND_DOCUMENTATION.md # Complete frontend documentation
-
-### For Administrators    ├── database_schema.sql      # Supabase database setup
-
-    └── setup.sh                 # Automated setup script
-
-**Dashboard & Analytics**```
-
-- Real-time statistics (Total, Submitted, In Progress, Escalated, Resolved)
-
-- Searchable complaints table## 🚀 Quick Start
-
-- Status filters and badges
-
-- Civic Intelligence placeholders (ready for Phase 3)### ⚠️ IMPORTANT: See the New Features!
-
-
-
-**Complaint Management****The AI features and Admin Dashboard require database migration!**
-
-- View detailed AI analysis reports
-
-- Update complaint status with dropdown👉 **[READ THIS FIRST: QUICK_START_GUIDE.md](./frontend/QUICK_START_GUIDE.md)** 👈
-
-- Automatic timeline tracking
-
-- View user feedbackThis guide explains:
-
-- Search and filter capabilities- Why you don't see the new features yet
-
-- How to migrate your database (5 minutes)
-
----- How to test AI analysis
-
-- How to access the admin dashboard
-
-## 🚀 Quick Start- Common issues and solutions
-
-
-
-### Prerequisites### Prerequisites
-
-- Node.js 18+ LTS
-
-- Node.js 18+ LTS- Git Bash (Windows) or Terminal (Mac/Linux)
-
-- Supabase account (free tier)- Supabase account (free tier works)
-
-- Git
-
-### Installation (5 minutes)
-
-### Installation (5 Minutes)
-
-1. **Clone the repository**
-
-1. **Clone Repository**   ```bash
-
-   ```bash   git clone https://github.com/PundarikakshNTripathi/ByteOrbit-Hackarena2025.git
-
-   git clone https://github.com/PundarikakshNTripathi/ByteOrbit-Hackarena2025.git   cd ByteOrbit-Hackarena2025/frontend
-
-   cd ByteOrbit-Hackarena2025/frontend   ```
-
+3. **Install backend dependencies**
+   ```powershell
+   pip install --upgrade pip
+   pip install -r backend/requirements.txt
    ```
 
-2. **Run setup script**
-
-2. **Install Dependencies**   ```bash
-
-   ```bash   bash setup.sh
-
-   npm install   ```
-
-   ```   Or manually:
-
-   ```bash
-
-3. **Configure Environment**   npm install
-
-      ```
-
-   Create `frontend/.env.local`:
-
-   ```env3. **Configure environment**
-
-   NEXT_PUBLIC_SUPABASE_URL=your_project_url   - Create a Supabase project at https://supabase.com
-
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key   - Update `frontend/.env.local` with your credentials:
-
-   ```     ```env
-
-     NEXT_PUBLIC_SUPABASE_URL=your_project_url
-
-4. **Setup Database**     NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-
-        ```
-
-   a. Create Supabase project at https://supabase.com
-
-   4. **Setup database**
-
-   b. Open SQL Editor and run the complete SQL from:   - Run the SQL in `frontend/database_schema.sql` in Supabase SQL Editor
-
-   ```   - **IMPORTANT:** If you already have a database, run the migration script in Section 7 of the schema file
-
-   frontend/database_schema.sql   - Create storage bucket named `complaint-images`
-
-   ```
-
-   5. **Start development server**
-
-   c. Create storage bucket:   ```bash
-
-   - Name: `complaint-images`   npm run dev
-
-   - Public: Yes   ```
-
-
-
-5. **Start Development**6. **Test the new features**
-
-   ```bash   - Sign up for an account
-
-   npm run dev   - Submit a complaint with an image to see AI analysis
-
-   ```   - Click "Admin" in navbar to access admin dashboard
-
-      - See full guide: [QUICK_START_GUIDE.md](./frontend/QUICK_START_GUIDE.md)
-
-   Visit: http://localhost:3000
-
-## 🛠️ Technology Stack
-
-6. **Test Features**
-
-   - Sign up for an account### Frontend
-
-   - Submit complaint with image- **Framework**: Next.js 14 (App Router)
-
-   - Watch AI detect the category!- **Language**: TypeScript
-
-   - Click "Admin" to see dashboard- **Styling**: Tailwind CSS
-
-- **UI Components**: Shadcn/ui
-
-📖 **Full Documentation**: [`frontend/FRONTEND_DOCUMENTATION.md`](./frontend/FRONTEND_DOCUMENTATION.md)- **State Management**: Zustand
-
-- **Maps**: Leaflet.js
-
----- **Icons**: Lucide React
-
-
-
-## 🛠️ Technology Stack### Backend (Supabase)
-
-- **Database**: PostgreSQL
-
-**Frontend**- **Authentication**: Supabase Auth
-
-- Next.js 14 (App Router)- **Storage**: Supabase Storage
-
-- TypeScript 5.3+- **Real-time**: Supabase Realtime (future)
-
-- Tailwind CSS 3.4+
-
-- Shadcn/ui Components### Infrastructure
-
-- Zustand (State Management)- **Hosting**: Vercel/Netlify (recommended)
-
-- Leaflet.js (Maps)- **Version Control**: Git + GitHub
-
-
-
-**Backend (Supabase)**## 📊 Feature Breakdown
-
-- PostgreSQL Database
-
-- Supabase Auth### ✅ Completed Features
-
-- Supabase Storage
-
-- Row Level Security (RLS)#### 1. User Authentication
-
-- [x] Email/password signup
-
-**Infrastructure**- [x] Login and session management
-
-- Vercel (Deployment)- [x] Protected routes
-
-- Git/GitHub- [x] Sign out functionality
-
-- [x] Role-based access (user/admin)
+4. **Apply the database schema and policies (Supabase SQL Editor)**
+   - `backend/database_schema_backend.sql`
+   - `backend/storage_policies.sql`
+
+### Frontend Setup
+```powershell
+cd frontend
+npm install
+```
+The frontend expects the backend to be available at `http://localhost:8000` by default.
 
 ---
 
-#### 2. AI-Powered Complaint Submission
-
-## 📁 Project Structure- [x] Multi-step form (3 steps)
-
-- [x] Image upload with preview
-
-```- [x] **AI Image Analysis**: Automatic issue detection from photos
-
-ByteOrbit-Hackarena2025/- [x] **AI Categorization**: Smart category suggestions with confidence scores
-
-├── frontend/- [x] **AI Confirmation Flow**: Review and confirm AI-detected issues
-
-│   ├── app/- [x] GPS auto-detection
-
-│   │   ├── (auth)/              # Login, Signup- [x] Interactive map for location adjustment
-
-│   │   ├── (main)/              # Public pages- [x] Category selection (with AI pre-fill)
-
-│   │   └── (admin)/             # Admin dashboard- [x] Description and landmark fields
-
-│   ├── components/
-
-│   │   ├── ui/                  # Shadcn components#### 3. Dashboard
-
-│   │   ├── complaint-form.tsx   # AI-powered form- [x] Interactive map with all complaints
-
-│   │   ├── ai-report-display.tsx- [x] Color-coded status markers
-
-│   │   ├── user-feedback.tsx- [x] Statistics cards
-
-│   │   ├── admin-complaints-table.tsx- [x] Responsive design
-
-│   │   └── ...- [x] Admin access button (for logged-in users)
-
-│   ├── lib/
-
-│   │   ├── supabase.ts          # Client & types#### 4. Enhanced Complaint Tracking
-
-│   │   ├── store.ts             # Zustand store- [x] Individual complaint detail pages
-
-│   │   └── utils.ts- [x] Status timeline
-
-│   ├── database_schema.sql      # Complete DB setup- [x] Image display
-
-│   ├── FRONTEND_DOCUMENTATION.md # Full documentation- [x] Location map
-
-│   └── package.json- [x] **AI Report Display**: View AI-detected category, confidence, and analysis
-
-└── README.md                    # This file- [x] **User Feedback System**: Star rating and comments for resolved issues
-
-```- [x] **XAI Placeholder**: Ready for explainable AI integration
-
-
-
----#### 5. Admin Dashboard
-
-- [x] Protected admin routes (`/admin-dashboard`, `/admin-complaints`)
-
-## 📊 Features Checklist- [x] **Real-time Statistics**: Total, Submitted, In Progress, Escalated, Resolved
-
-- [x] **Complaints Table**: Searchable, sortable, with status badges
-
-### ✅ Completed- [x] **Status Management**: Update complaint status with dropdown
-
-- [x] **Detailed View**: Full complaint information with AI reports
-
-**Authentication**- [x] **Action Timeline**: Track all status changes
-
-- [x] Email/password signup- [x] **Civic Intelligence Placeholders**: Ready for analytics integration
-
-- [x] Login/logout
-
-- [x] Protected routes#### 6. UI/UX
-
-- [x] Role-based access (user/admin)- [x] Responsive design (mobile-first)
-
-- [x] Dark mode support
-
-**AI Features**- [x] Modern, clean interface
-
-- [x] AI image analysis (mock, 2-second delay)- [x] Accessibility features
-
-- [x] Category detection (85-99% confidence)- [x] **AI Branding**: Sparkles icons for AI features
-
-- [x] Confirmation workflow- [x] **Badge Components**: Status indicators
-
-- [x] AI report display- [x] **Table Components**: Admin data display
-
-- [x] Category pre-fill
-
-### 🔮 Future Enhancements
-
-**Complaint System**
-
-- [x] Multi-step submission form#### Backend AI Agent (Next Phase)
-
-- [x] Image upload to Supabase Storage- [ ] Real AI model integration (replace mock analysis)
-
-- [x] GPS location detection- [ ] Automated email sending to authorities
-
-- [x] Interactive map picker- [ ] SLA tracking and escalation
-
-- [x] Status timeline- [ ] Follow-up reminders
-
-- [x] User feedback (5-star rating + comments)- [ ] Advanced sentiment analysis
-
-
-
-**Admin Dashboard**#### Frontend Improvements
-
-- [x] Real-time statistics- [ ] Real-time updates via WebSockets
-
-- [x] Searchable complaints table- [ ] Advanced filtering and search
-
-- [x] Status management- [ ] Export reports (PDF/CSV)
-
-- [x] AI report viewing- [ ] User profile management
-
-- [x] User feedback viewing- [ ] Notification system
-
-- [x] Action timeline- [ ] Explainable AI (XAI) visualizations
-
-- [ ] Civic Intelligence heatmaps and performance metrics
-
-**UI/UX**
-
-- [x] Responsive design (mobile-first)#### Mobile App
-
-- [x] Dark/light mode- [ ] React Native version
-
-- [x] Homepage AI showcase- [ ] Push notifications
-
-- [x] Authentication notices- [ ] Offline support
-
-- [x] Professional branding
-
-## 📖 Documentation
-
-### 🔮 Planned (Future)
-
-Comprehensive documentation is available in the `frontend/` directory:
-
-**Phase 3 - Civic Intelligence**
-
-- [ ] Real AI model integration**[FRONTEND_DOCUMENTATION.md](./frontend/FRONTEND_DOCUMENTATION.md)** - Complete guide including:
-
-- [ ] Issue heatmap visualization- Installation & Setup
-
-- [ ] Performance metrics- Quick Start Guide
-
-- [ ] Trend analysis- Project Structure
-
-- [ ] Predictive analytics- Navigation System
-
-- Components Reference
-
-**Phase 4 - Advanced Features**- Database Setup
-
-- [ ] Explainable AI (XAI)- Development Guide
-
-- [ ] Real-time notifications- Deployment Instructions
-
-- [ ] Email integration- Contributing Guidelines
-
-- [ ] Mobile app (React Native)- Troubleshooting
-
-- [ ] Export reports (PDF/CSV)
-
-- [ ] Multi-language support## 🎨 Screenshots
-
-
-
----### Landing Page
-
-Modern hero section with clear call-to-action buttons
-
-## 🎨 Screenshots
-
-### Complaint Form
-
-**Homepage**: AI features showcased with "NEW" badges and authentication requirementsIntuitive 3-step process:
-
-1. Upload evidence photo
-
-**AI Analysis**: Upload image → Wait 2 seconds → See detected category with confidence2. Pin location on map
-
-3. Describe the issue
-
-**Admin Dashboard**: Real-time stats, searchable table, status management
-
-### Dashboard
-
-**User Feedback**: 5-star rating system for resolved complaintsInteractive map showing all issues with color-coded markers
-
-
-
----### Status Tracker
-
-Timeline view of all actions taken on a complaint
-
-## 📖 Documentation
-
-## 🔐 Security & Privacy
-
-**Complete Guide**: [`frontend/FRONTEND_DOCUMENTATION.md`](./frontend/FRONTEND_DOCUMENTATION.md)
-
-- **Row Level Security (RLS)**: Database-level access control
-
-This includes:- **Secure Authentication**: Handled by Supabase Auth
-
-- Quick start with database migration- **Public Transparency**: All complaints visible to promote accountability
-
-- Project structure details- **User Privacy**: Email addresses not exposed publicly
-
-- Component documentation
-
-- Database schema explanation## 🚀 Deployment
-
-- AI features guide
-
-- Admin dashboard guide### Vercel (Recommended)
-
-- Troubleshooting
-
-- Deployment instructions1. Push code to GitHub
-
-- Contributing guidelines2. Import project in Vercel
-
-3. Add environment variables
-
----4. Deploy!
-
-
-
-## 🧪 Testing### Netlify
-
-
-
-```bash1. Connect GitHub repository
-
-# Run dev server2. Set build command: `npm run build`
-
-npm run dev3. Set publish directory: `.next`
-
-4. Add environment variables
-
-# Build for production5. Deploy!
-
-npm run build
-
-## 🤝 Contributing
-
-# Lint code
-
-npm run lintWe welcome contributions! Please see [frontend/FRONTEND_DOCUMENTATION.md](./frontend/FRONTEND_DOCUMENTATION.md#contributing) for:
-
-```- Code style guidelines
-
-- Pull request process
-
-**Test Scenarios**:- Development workflow
-
-1. Sign up → Submit complaint with image → See AI analysis- Testing requirements
-
-2. View complaint → Check AI report → Submit feedback (if resolved)
-
-3. Login → Click "Admin" → View dashboard → Update status## 📄 Database Schema
-
-4. Search complaints → Filter by status → View details
-
-### Tables
+## Configuration
+Create environment files before running services.
+
+**Backend `.env`:**
+```
+SUPABASE_URL=...
+SUPABASE_SERVICE_ROLE_KEY=...
+GEMINI_API_KEY=...
+VISION_MODEL_NAME=gemini-pro-vision
+TEXT_MODEL_NAME=gemini-pro
+BREVO_API_KEY=...
+BREVO_SENDER_EMAIL=...
+BREVO_SENDER_NAME=CivicAgent
+FRONTEND_URL=http://localhost:3000
+BACKEND_URL=http://localhost:8000
+```
+
+**Frontend `.env.local`:**
+```
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
+NEXT_PUBLIC_MAP_DEFAULT_LAT=28.6139
+NEXT_PUBLIC_MAP_DEFAULT_LNG=77.2090
+```
+
+Add additional secrets such as OAuth credentials if enabling social login.
 
 ---
 
-**complaints**
+## Running Locally
+### Start the Backend
+```powershell
+cd backend
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+(Activate your virtual environment beforehand if needed.)
 
-## 🚀 Deployment- Stores all reported issues
-
-- Includes location, category, description, status
-
-### Vercel (Recommended)- Links to user and image
-
-- **NEW**: AI fields (ai_detected_category, ai_confidence, ai_report)
-
-1. Push to GitHub- **NEW**: Department assignment (assigned_department, official_summary)
-
-2. Import project in Vercel- **NEW**: User feedback (user_rating, user_feedback)
-
-3. Add environment variables:
-
-   - `NEXT_PUBLIC_SUPABASE_URL`**complaint_actions**
-
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`- Timeline of actions for each complaint
-
-4. Deploy!- Tracks emails, escalations, resolutions, status changes
-
-- Provides transparency
-
-### Manual
-
-**users** (managed by Supabase Auth)
-
-```bash- User authentication data
-
-npm run build- **NEW**: Role field (user/admin) for access control
-
-npm start
-
-```See `frontend/database_schema.sql` for complete schema and setup SQL.
-
-
-
----## 🧪 Testing Checklist
-
-
-
-## 🐛 Troubleshooting### Authentication & Access
-
-- [x] User registration works
-
-**AI features not showing?**- [x] Login/logout functionality
-
-- Run the database migration SQL (see `database_schema.sql` Section 7)- [x] Admin dashboard access
-
-- Sign up and login to access features- [x] Role-based route protection
-
-- Check browser console for errors
-
-### Complaint Submission
-
-**Admin button not appearing?**- [x] Image upload to Supabase Storage
-
-- You must be logged in- [x] **AI analysis triggers on image upload**
-
-- Check navbar for your email- [x] **AI confidence display (85-99%)**
-
-- [x] **AI confirmation workflow**
-
-**Build errors?**- [x] GPS location detection
-
-- Run `npm install` again- [x] Map marker placement
-
-- Delete `.next` folder and rebuild- [x] Form validation
-
-- Check environment variables are set- [x] Data saved to database
-
-
-
-📖 **Full troubleshooting**: See [`frontend/FRONTEND_DOCUMENTATION.md`](./frontend/FRONTEND_DOCUMENTATION.md)### Dashboard & Tracking
-
-- [x] Dashboard map renders
-
----- [x] Complaint details page loads
-
-- [x] **AI report displays correctly**
-
-## 📞 Support- [x] **User feedback submission (owner-only)**
-
-- [x] Timeline displays correctly
-
-**Documentation**: [`frontend/FRONTEND_DOCUMENTATION.md`](./frontend/FRONTEND_DOCUMENTATION.md)- [x] **Status updates reflect in timeline**
-
-
-
-**Issues**: Open a GitHub issue with:### Admin Features
-
-- Error messages- [x] **Admin statistics accurate**
-
-- Steps to reproduce- [x] **Complaints table search works**
-
-- Screenshots- [x] **Status update saves to database**
-
-- Browser console logs- [x] **Admin complaint detail view**
-
-- [x] **Navigation between admin pages**
+### Start the Frontend
+```powershell
+cd frontend
+npm run dev
+```
+Visit `http://localhost:3000` and sign up for an account to access the authenticated flows. The map search uses the Nominatim public endpoint - keep usage within their fair-use policy.
 
 ---
 
-### UI/UX
-
-## 👥 Team- [x] Dark mode toggles properly
-
-- [x] Mobile responsive
-
-**ByteOrbit** - Hackarena 2025- [x] **AI sparkles icons display**
-
-- [x] **Badge components render**
-
----- [x] **Table components functional**
-
-
-
-## 📄 License## 🏆 Hackathon Details
-
-
-
-[Specify License]- **Event**: Hackarena 2025
-
-- **Team**: ByteOrbit
-
----- **Category**: Civic Tech / Government Innovation
-
-- **Timeline**: [Add dates]
-
-## 🙏 Acknowledgments
-
-## 📞 Support
-
-- Next.js - React framework
-
-- Supabase - Backend infrastructureFor issues or questions:
-
-- Shadcn/ui - UI components1. Check [FRONTEND_DOCUMENTATION.md](./frontend/FRONTEND_DOCUMENTATION.md)
-
-- Leaflet - Map visualization2. Review the [Troubleshooting section](./frontend/FRONTEND_DOCUMENTATION.md#troubleshooting)
-
-- Tailwind CSS - Styling system3. Search existing GitHub issues
-
-4. Create a new issue with details
+## Troubleshooting & Known Issues
+- **Database mismatch errors:** Re-run `backend/database_schema_backend.sql` and `backend/storage_policies.sql` in Supabase to align columns and RLS policies.
+- **AI analysis returning 429 or 5xx:** Gemini APIs enforce quota limits; retry after a short delay or reduce concurrent submissions during demos.
+- **Emails not sending:** Ensure the Brevo API key is active and transactional email is enabled for the sender domain.
+- **Map search empty:** Nominatim rate-limits aggressively. Reduce rapid searches or self-host the service for production use.
+- **Admin stats blank:** Confirm the Supabase service role key is configured and Row Level Security is enabled with the provided policies.
 
 ---
 
-## 📝 License
-
-**Built with ❤️ for better communities** 🏙️
-
-[Specify license - MIT recommended for open source]
-
-## 🙏 Acknowledgments
-
-- **Next.js** for the excellent framework
-- **Supabase** for backend infrastructure
-- **Shadcn** for beautiful UI components
-- **Leaflet** for mapping capabilities
-- **Tailwind CSS** for styling system
-
-## 📈 Project Stats
-
-- **Lines of Code**: ~5,500+ (previously ~3,500)
-- **Components**: 22+ (previously 15+)
-- **Pages**: 9 (previously 7)
-- **Database Tables**: 2 (with extended schema)
-- **API Routes**: Supabase handles all backend
-- **New Features**: AI Analysis, Admin Dashboard, User Feedback
-
-## 🎯 Vision & Impact
-
-CivicAgent aims to:
-1. **Empower Citizens**: Give them a voice and visibility
-2. **Improve Accountability**: Make government response transparent
-3. **Speed Up Resolution**: Automated follow-ups reduce delays
-4. **Build Trust**: Transparency builds confidence in governance
-5. **Data-Driven Decisions**: Analytics help identify systemic issues
-
-## 🚀 Next Steps
-
-1. **Backend Development**: Build AI agent for automated follow-ups
-2. **Email Integration**: Connect with government email systems
-3. **Mobile App**: Develop iOS/Android versions
-4. **Analytics Dashboard**: Create insights for administrators
-5. **Scale**: Deploy to multiple municipalities
+## Future Roadmap
+- Improve image categorisation accuracy with domain-specific fine-tuning and ensemble techniques.
+- Roll out civic intelligence heatmaps and performance metrics to the public monitoring dashboard.
+- Expand multilingual support (Hindi and regional languages) across AI prompts and UI copy.
+- Add mobile-first offline capture with SMS fallback for low-connectivity zones.
+- Introduce two-way department collaboration (comment threads, attachments) and SLA dashboards.
 
 ---
 
-**Built with ❤️ for better communities**
+## License
+This project is distributed under the **Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International** license.
 
-For the complete experience and detailed setup instructions, see [frontend/FRONTEND_DOCUMENTATION.md](./frontend/FRONTEND_DOCUMENTATION.md).
-
-Happy coding! 🎉
+See [`LICENSE`](LICENSE) for the full legal text.
