@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: civicagent-backend
+    env: python
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: VISION_MODEL_NAME
+        value: gemini-1.5-flash
+      - key: TEXT_MODEL_NAME
+        value: gemini-1.5-pro
+      - key: BREVO_API_KEY
+        sync: false
+      - key: BREVO_SENDER_EMAIL
+        sync: false
+      - key: BREVO_SENDER_NAME
+        value: CivicAgent
+      - key: FRONTEND_URL
+        sync: false
+      - key: BACKEND_URL
+        sync: false
