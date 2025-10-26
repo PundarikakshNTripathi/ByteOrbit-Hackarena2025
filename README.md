@@ -49,6 +49,7 @@ CivicAgent unifies AI-assisted complaint filing, transparent public monitoring, 
 - [Configuration](#configuration)
 - [Running Locally](#running-locally)
 - [Troubleshooting & Known Issues](#troubleshooting--known-issues)
+- [Deployment & Scalability](#deployment--scalability)
 - [Future Roadmap](#future-roadmap)
 - [License](#license)
 
@@ -292,6 +293,15 @@ npm run dev
 - **Emails not sending:** Ensure the Brevo API key is active and transactional email is enabled for the sender domain.
 - **Map search empty:** Nominatim rate-limits aggressively. Reduce rapid searches or self-host the service for production use.
 - **Admin stats blank:** Confirm the Supabase service role key is configured and Row Level Security is enabled with the provided policies.
+
+---
+
+## Deployment & Scalability
+- **Frontend (Vercel):** `main` pushes auto-deploy to the Vercel project. Vercel’s global CDN caches static assets while API data routes forward to Render via `NEXT_PUBLIC_BACKEND_URL`.
+- **Backend (Render):** The FastAPI service runs on Render Free. Render restarts on new git pushes. Add a paid plan or K/V caches (Upstash) to avoid cold starts.
+- **Supabase:** Acts as the single source of truth (PostgreSQL + Auth + Storage). Upgrade the tier to increase connection limits and enable PITR as load grows.
+- **Scaling plan:** Move off Render Free → Render Standard ($7/mo) for always-on uptime; add Supabase connection pooling; introduce background workers via Cloud Tasks or Celery if complaint volume increases beyond scheduler capacity.
+- **Monitoring:** Use Vercel Analytics for page performance and Render logs for API errors; enable Supabase log drains (Datadog, Logflare) for query-level insights.
 
 ---
 
