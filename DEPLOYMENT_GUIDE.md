@@ -97,6 +97,7 @@ Click **"Environment Variables"** and add:
 |------|-------|
 | `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anon key |
+| `NEXT_PUBLIC_SITE_URL` | Your Vercel URL (e.g., `https://civicagent.vercel.app`) |
 | `NEXT_PUBLIC_BACKEND_URL` | `https://your-backend-url.onrender.com` (we'll get this in Part 2) |
 | `NEXT_PUBLIC_MAP_DEFAULT_LAT` | `28.6139` |
 | `NEXT_PUBLIC_MAP_DEFAULT_LNG` | `77.2090` |
@@ -320,6 +321,17 @@ BACKEND_CORS_ORIGINS: str = '["https://civicagent.vercel.app","http://localhost:
 4. Wait for AI analysis (should work now!)
 5. Check admin dashboard
 6. Verify emails are sent (check spam folder)
+
+### Step 4: Update Supabase Auth URLs
+
+1. Open **Supabase Dashboard → Authentication → URL Configuration**
+2. Set **Site URL** to `https://civicagent.vercel.app`
+3. Add these entries under **Redirect URLs** (keep the localhost ones for local testing):
+  - `https://civicagent.vercel.app`
+  - `https://civicagent.vercel.app/dashboard`
+  - `http://localhost:3000`
+  - `http://localhost:3001`
+4. Save changes so Google OAuth returns to the live domain instead of localhost
 
 ---
 

@@ -3,6 +3,7 @@
 import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
+import { SITE_URL } from "@/lib/config"
 
 // Google logo SVG component
 const GoogleIcon = () => (
@@ -22,10 +23,13 @@ export default function SocialLogins() {
     setLoading(true)
     setError("")
 
+    const baseUrl = typeof window !== "undefined" ? window.location.origin : SITE_URL
+    const redirectUrl = `${baseUrl.replace(/\/$/, "")}/dashboard`
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/dashboard`,
+        redirectTo: redirectUrl,
       },
     })
 

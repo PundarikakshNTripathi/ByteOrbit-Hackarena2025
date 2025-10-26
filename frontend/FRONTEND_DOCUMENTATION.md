@@ -3583,6 +3583,7 @@ const analyzeImageWithAI = async (file: File) => {
 ⚠️ **Always use Git Bash on Windows** - PowerShell won't work properly  
 ⚠️ **Install dependencies before running** - Run `npm install` first  
 ⚠️ **Configure .env.local** - Required for Supabase connection  
+⚠️ **Set NEXT_PUBLIC_SITE_URL** - Points Supabase OAuth to your deployed domain  
 ⚠️ **Set up database** - Run SQL schema in Supabase  
 
 ---
