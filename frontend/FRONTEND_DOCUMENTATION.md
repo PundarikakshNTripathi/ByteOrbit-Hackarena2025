@@ -50,13 +50,21 @@ npm run dev
 ```
 
 Then:
-1. Visit http://localhost:3000
+1. Visit http://localhost:3000 (or the next available port if 3000 is in use)
 2. **Sign up** for an account (required!)
 3. Go to `/submit` and upload an image
 4. Wait 2 seconds to see AI analysis!
-5. Click "Admin" in navbar to see dashboard
+5. Click "Public Monitoring" in navbar to see dashboard
 
 **That's it!** All features will work after these 2 steps.
+
+**Troubleshooting:** If you see "Cannot find module" errors, clear the build cache:
+```bash
+Remove-Item -Recurse -Force .next  # Windows PowerShell
+# or
+rm -rf .next                        # Mac/Linux
+npm run dev
+```
 
 ---
 

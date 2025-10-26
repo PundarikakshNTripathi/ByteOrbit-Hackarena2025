@@ -273,7 +273,13 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 cd frontend
 npm run dev
 ```
-Visit `http://localhost:3000` and sign up for an account to access the authenticated flows. The map search uses the Nominatim public endpoint - keep usage within their fair-use policy.
+Visit `http://localhost:3000` (or the next available port if 3000 is in use) and sign up for an account to access the authenticated flows. The map search uses the Nominatim public endpoint - keep usage within their fair-use policy.
+
+**Note:** If you see a "Cannot find module" error, delete the `.next` build cache and restart:
+```powershell
+Remove-Item -Recurse -Force .next
+npm run dev
+```
 
 ---
 

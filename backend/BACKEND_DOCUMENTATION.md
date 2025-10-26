@@ -1021,12 +1021,14 @@ ls models/
 
 **Solution**:
 ```python
-# Update CORS_ORIGINS in .env
-CORS_ORIGINS=http://localhost:3000,https://your-frontend.vercel.app
+# Update CORS_ORIGINS in .env (supports multiple ports)
+CORS_ORIGINS=http://localhost:3000,http://localhost:3001,https://your-frontend.vercel.app
 
 # Or in code (app/core/config.py)
 CORS_ORIGINS = ["*"]  # Allow all (dev only!)
 ```
+
+**Note**: Next.js may use port 3001 if 3000 is already in use.
 
 ### Debug Mode
 
