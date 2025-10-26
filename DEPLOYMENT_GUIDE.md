@@ -208,7 +208,7 @@ Make sure CORS allows your Vercel domain:
 class Settings(BaseSettings):
     # ... other settings ...
     
-    CORS_ORIGINS: str = "http://localhost:3000,http://localhost:3001,https://your-vercel-app.vercel.app"
+  BACKEND_CORS_ORIGINS: str = '["http://localhost:3000","http://localhost:3001","https://civicagent.vercel.app"]'
     
     # ... rest of config ...
 ```
@@ -302,14 +302,14 @@ Click **"Advanced"** → **"Add Environment Variable"** and add:
 1. Go to your Render service dashboard
 2. Navigate to **Environment** tab
 3. Add/update variable:
-   - **Key**: `CORS_ORIGINS`
-   - **Value**: `https://your-vercel-app.vercel.app,http://localhost:3000,http://localhost:3001`
+  - **Key**: `BACKEND_CORS_ORIGINS`
+  - **Value**: `["https://civicagent.vercel.app","http://localhost:3000","http://localhost:3001"]`
 4. Click **"Save Changes"**
 5. Render will auto-redeploy
 
 **Alternative**: Update `backend/app/core/config.py` and push:
 ```python
-CORS_ORIGINS: str = "https://your-vercel-app.vercel.app,http://localhost:3000"
+BACKEND_CORS_ORIGINS: str = '["https://civicagent.vercel.app","http://localhost:3000"]'
 ```
 
 ### Step 3: Test Full Stack
@@ -393,10 +393,9 @@ Already enabled! Every push to your branch auto-deploys.
 
 **Solution**:
 ```python
-# backend/app/core/config.py
-CORS_ORIGINS: str = "https://your-vercel-app.vercel.app"
+BACKEND_CORS_ORIGINS: str = '["https://civicagent.vercel.app"]'
 ```
-OR set `CORS_ORIGINS` env var in Render dashboard.
+OR set `BACKEND_CORS_ORIGINS` env var in Render dashboard.
 
 ### Issue 2: Environment Variables Not Working
 **Symptom**: Backend crashes with "SUPABASE_URL not found"

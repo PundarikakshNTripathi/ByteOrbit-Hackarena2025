@@ -903,7 +903,7 @@ NEXT_PUBLIC_API_URL=https://civicagent-api.onrender.com
    app.state.limiter = limiter
    ```
 
-3. **CORS**: Update `settings.CORS_ORIGINS` to production domains only
+3. **CORS**: Update `settings.BACKEND_CORS_ORIGINS` to production domains only
 
 4. **Secrets Management**:
    - Never commit `.env` file
@@ -1021,11 +1021,11 @@ ls models/
 
 **Solution**:
 ```python
-# Update CORS_ORIGINS in .env (supports multiple ports)
-CORS_ORIGINS=http://localhost:3000,http://localhost:3001,https://your-frontend.vercel.app
+# Update BACKEND_CORS_ORIGINS in .env (supports multiple ports)
+BACKEND_CORS_ORIGINS=["http://localhost:3000","http://localhost:3001","https://civicagent.vercel.app"]
 
 # Or in code (app/core/config.py)
-CORS_ORIGINS = ["*"]  # Allow all (dev only!)
+BACKEND_CORS_ORIGINS = ["*"]  # Allow all (dev only!)
 ```
 
 **Note**: Next.js may use port 3001 if 3000 is already in use.
