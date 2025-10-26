@@ -31,6 +31,8 @@ Copyright (c) 2025 This project is licensed under the CC BY-NC-ND 4.0 license. S
 
 CivicAgent unifies AI-assisted complaint filing, transparent public monitoring, and automated government follow-up into one cohesive platform. Residents can submit issues with photo evidence and precise map coordinates (including autocomplete search), administrators get actionable analytics, and the system takes care of escalations, emails, and SLA tracking.
 
+**Live Demo:** https://civicagent.vercel.app/
+
 ---
 
 ## Table of Contents
