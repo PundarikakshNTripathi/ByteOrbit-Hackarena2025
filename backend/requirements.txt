@@ -8,7 +8,7 @@ python-dotenv==1.0.1
 pydantic==2.5.3
 pydantic-settings==2.1.0
 
-# Supabase - Pin exact compatible versions
+# Supabase - Compatible versions
 supabase==2.3.4
 postgrest==0.10.8
 gotrue==2.4.4
@@ -16,8 +16,8 @@ realtime==1.0.0
 storage3==0.5.3
 supafunc==0.3.1
 
-# HTTP Client - CRITICAL: Must be 0.25.x for compatibility
-httpx==0.25.2
+# HTTP Client - CRITICAL: Must be 0.24.x for postgrest compatibility
+httpx==0.24.1
 
 # AI & ML
 google-generativeai==0.3.2
