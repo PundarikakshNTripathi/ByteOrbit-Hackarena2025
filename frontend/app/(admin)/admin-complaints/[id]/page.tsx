@@ -9,6 +9,8 @@ import { StatusTimeline } from "@/components/status-timeline"
 import { AiReportDisplay } from "@/components/ai-report-display"
 import { BackButton } from "@/components/back-button"
 import { Badge } from "@/components/ui/badge"
+import { ShapVisualization } from "@/components/shap-visualization"
+import { CategoryOverride } from "@/components/category-override"
 import { MapPin, Calendar, Tag, RefreshCw } from "lucide-react"
 import dynamic from "next/dynamic"
 import Image from "next/image"
@@ -207,6 +209,29 @@ export default function AdminComplaintDetail() {
 
       {/* AI Report */}
       <AiReportDisplay complaint={complaint} />
+
+      {/* Admin-Only Features Grid */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Category Override */}
+        <CategoryOverride 
+          complaintId={complaint.id}
+          currentCategory={complaint.category || "Other Infrastructure"}
+          onCategoryUpdate={(newCategory) => {
+            setComplaint({ ...complaint, category: newCategory })
+          }}
+        />
+
+        {/* SHAP Explainability - Only show if ML decision data exists */}
+        {complaint.ai_report && (
+          <ShapVisualization 
+            explanation={
+              typeof complaint.ai_report === 'string' 
+                ? JSON.parse(complaint.ai_report) 
+                : complaint.ai_report
+            }
+          />
+        )}
+      </div>
 
       {/* Details Grid */}
       <div className="grid gap-6 lg:grid-cols-2">
