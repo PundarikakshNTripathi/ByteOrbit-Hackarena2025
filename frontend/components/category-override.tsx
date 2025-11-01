@@ -71,7 +71,7 @@ export function CategoryOverride({
         .from("complaint_actions")
         .insert({
           complaint_id: complaintId,
-          action_type: "status_changed",
+          action_type: "status_change",
           action_description: `Admin changed category from "${currentCategory}" to "${selectedCategory}"`,
           timestamp: new Date().toISOString()
         })
