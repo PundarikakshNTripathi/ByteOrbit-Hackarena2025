@@ -20,7 +20,7 @@ export default function Error({
       <div className="text-center space-y-4 max-w-md">
         <h2 className="text-2xl font-bold">Something went wrong!</h2>
         <p className="text-muted-foreground">
-          We couldn't load this complaint. The ID might be invalid or the complaint may have been removed.
+          We could not load this complaint. The ID might be invalid or the complaint may have been removed.
         </p>
         <div className="flex gap-4 justify-center">
           <Button onClick={reset}>Try Again</Button>
