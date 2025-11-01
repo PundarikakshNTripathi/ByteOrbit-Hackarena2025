@@ -46,14 +46,21 @@ export default function ComplaintDetailPage() {
     setLoading(true)
     setError(null)
     try {
+      const numericId = parseInt(complaintId, 10)
+      console.log("Fetching complaint with ID:", numericId)
+      
       // Fetch complaint details
       const { data: complaintData, error: complaintError } = await supabase
         .from("complaints")
         .select("*")
-        .eq("id", parseInt(complaintId, 10))
+        .eq("id", numericId)
         .single()
 
+      console.log("Complaint data:", complaintData)
+      console.log("Complaint error:", complaintError)
+
       if (complaintError) {
+        console.error("Supabase error details:", complaintError)
         setError("Complaint not found")
         setLoading(false)
         return
