@@ -29,15 +29,15 @@ export default function ComplaintDetailPage() {
   const { user } = useAuthStore()
   const isOwner = user?.id === complaint?.user_id
 
-  // Validate UUID format
-  const isValidUUID = (id: string) => {
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-    return uuidRegex.test(id)
+  // Validate ID is a positive integer
+  const isValidId = (id: string) => {
+    const numId = parseInt(id, 10)
+    return !isNaN(numId) && numId > 0
   }
 
   const fetchComplaintDetails = useCallback(async () => {
-    // Validate UUID before making API call
-    if (!isValidUUID(complaintId)) {
+    // Validate ID before making API call
+    if (!isValidId(complaintId)) {
       setError("Invalid complaint ID format")
       setLoading(false)
       return
@@ -50,7 +50,7 @@ export default function ComplaintDetailPage() {
       const { data: complaintData, error: complaintError } = await supabase
         .from("complaints")
         .select("*")
-        .eq("id", complaintId)
+        .eq("id", parseInt(complaintId, 10))
         .single()
 
       if (complaintError) {
@@ -64,7 +64,7 @@ export default function ComplaintDetailPage() {
       const { data: actionsData, error: actionsError } = await supabase
         .from("complaint_actions")
         .select("*")
-        .eq("complaint_id", complaintId)
+        .eq("complaint_id", parseInt(complaintId, 10))
         .order("created_at", { ascending: false })
 
       if (actionsError) {
