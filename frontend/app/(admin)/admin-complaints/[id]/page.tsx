@@ -21,7 +21,8 @@ const DynamicMap = dynamic(() => import("@/components/map-picker"), {
 export default function AdminComplaintDetail() {
   const params = useParams()
   const router = useRouter()
-  const complaintId = params?.id as string
+  const complaintIdStr = params?.id as string
+  const complaintId = parseInt(complaintIdStr, 10)
   
   const [complaint, setComplaint] = useState<Complaint | null>(null)
   const [actions, setActions] = useState<ComplaintAction[]>([])
@@ -51,7 +52,7 @@ export default function AdminComplaintDetail() {
       if (actionsError) {
         setActions([
           {
-            id: "1",
+            id: 1,
             complaint_id: complaintId,
             action_type: "submitted",
             description: "Complaint submitted",
