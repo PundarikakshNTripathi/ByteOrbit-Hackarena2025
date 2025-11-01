@@ -47,7 +47,6 @@ export default function ComplaintDetailPage() {
     setError(null)
     try {
       const numericId = parseInt(complaintId, 10)
-      console.log("Fetching complaint with ID:", numericId)
       
       // Fetch complaint details
       const { data: complaintData, error: complaintError } = await supabase
@@ -56,11 +55,7 @@ export default function ComplaintDetailPage() {
         .eq("id", numericId)
         .single()
 
-      console.log("Complaint data:", complaintData)
-      console.log("Complaint error:", complaintError)
-
       if (complaintError) {
-        console.error("Supabase error details:", complaintError)
         setError("Complaint not found")
         setLoading(false)
         return
@@ -78,8 +73,8 @@ export default function ComplaintDetailPage() {
         // If table doesn't exist or no actions, create a default one
         setActions([
           {
-            id: "1",
-            complaint_id: complaintId,
+            id: 1,
+            complaint_id: numericId,
             action_type: "submitted",
             description: "Complaint submitted successfully",
             created_at: complaintData?.created_at || new Date().toISOString(),
@@ -151,7 +146,7 @@ export default function ComplaintDetailPage() {
             <div>
               <h1 className="text-4xl font-bold tracking-tight">{complaint.category}</h1>
               <p className="text-muted-foreground mt-2">
-                Complaint ID: {complaint.id.substring(0, 8)}...
+                Complaint ID: #{complaint.id}
               </p>
             </div>
             <span

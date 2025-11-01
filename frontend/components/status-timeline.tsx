@@ -4,7 +4,7 @@ import { CheckCircle2, Clock, AlertTriangle, Send } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 
 interface TimelineAction {
-  id: string
+  id: number
   action_type: string
   description: string
   created_at: string

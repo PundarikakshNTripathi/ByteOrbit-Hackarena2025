@@ -8,7 +8,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 export type ComplaintStatus = 'submitted' | 'in_progress' | 'escalated' | 'resolved'
 
 export interface Complaint {
-  id: string
+  id: number
   user_id: string
   category?: string
   user_description?: string  // Actual DB field
@@ -33,8 +33,8 @@ export interface Complaint {
 }
 
 export interface ComplaintAction {
-  id: string
-  complaint_id: string
+  id: number
+  complaint_id: number
   action_type: string
   description: string
   created_at: string

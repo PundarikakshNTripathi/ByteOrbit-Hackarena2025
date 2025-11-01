@@ -8,7 +8,7 @@ import { Star, MessageSquare } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 
 interface UserFeedbackProps {
-  complaintId: string
+  complaintId: number
   existingRating?: number
   existingFeedback?: string
   onFeedbackSubmitted?: () => void
