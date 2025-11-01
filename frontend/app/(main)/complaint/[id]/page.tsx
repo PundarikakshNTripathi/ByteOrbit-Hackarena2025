@@ -25,11 +25,26 @@ export default function ComplaintDetailPage() {
   const [complaint, setComplaint] = useState<Complaint | null>(null)
   const [actions, setActions] = useState<ComplaintAction[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const { user } = useAuthStore()
   const isOwner = user?.id === complaint?.user_id
 
+  // Validate UUID format
+  const isValidUUID = (id: string) => {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+    return uuidRegex.test(id)
+  }
+
   const fetchComplaintDetails = useCallback(async () => {
+    // Validate UUID before making API call
+    if (!isValidUUID(complaintId)) {
+      setError("Invalid complaint ID format")
+      setLoading(false)
+      return
+    }
+
     setLoading(true)
+    setError(null)
     try {
       // Fetch complaint details
       const { data: complaintData, error: complaintError } = await supabase
@@ -38,7 +53,11 @@ export default function ComplaintDetailPage() {
         .eq("id", complaintId)
         .single()
 
-      if (complaintError) throw complaintError
+      if (complaintError) {
+        setError("Complaint not found")
+        setLoading(false)
+        return
+      }
       setComplaint(complaintData)
 
       // Fetch complaint actions/timeline
@@ -101,10 +120,13 @@ export default function ComplaintDetailPage() {
     )
   }
 
-  if (!complaint) {
+  if (error || !complaint) {
     return (
       <div className="container py-20 flex flex-col items-center justify-center space-y-4">
-        <p className="text-muted-foreground">Complaint not found</p>
+        <p className="text-lg font-semibold">Complaint Not Found</p>
+        <p className="text-muted-foreground">
+          {error || "The complaint you're looking for doesn't exist or has been removed."}
+        </p>
         <BackButton href="/dashboard" label="Back to Dashboard" variant="default" />
       </div>
     )

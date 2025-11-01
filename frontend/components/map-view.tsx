@@ -73,8 +73,24 @@ export function MapView({ complaints }: MapViewProps) {
 
     if (complaints.length === 0) return
 
+    // Filter complaints with valid coordinates
+    const validComplaints = complaints.filter((c) => {
+      const lat = parseFloat(String(c.latitude))
+      const lng = parseFloat(String(c.longitude))
+      return (
+        !isNaN(lat) &&
+        !isNaN(lng) &&
+        lat >= -90 &&
+        lat <= 90 &&
+        lng >= -180 &&
+        lng <= 180
+      )
+    })
+
+    if (validComplaints.length === 0) return
+
     // Add markers for each complaint
-    complaints.forEach((complaint) => {
+    validComplaints.forEach((complaint) => {
       if (!mapRef.current) return
 
       const icon = createCustomIcon(getMarkerColor(complaint.status))
@@ -99,9 +115,9 @@ export function MapView({ complaints }: MapViewProps) {
     })
 
     // Fit map to show all markers
-    if (complaints.length > 0) {
+    if (validComplaints.length > 0) {
       const bounds = L.latLngBounds(
-        complaints.map((c) => [c.latitude, c.longitude])
+        validComplaints.map((c) => [c.latitude, c.longitude])
       )
       mapRef.current.fitBounds(bounds, { padding: [50, 50] })
     }
