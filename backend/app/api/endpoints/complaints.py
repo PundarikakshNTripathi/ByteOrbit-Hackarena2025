@@ -98,7 +98,34 @@ async def create_complaint(
         # Calculate SLA deadline
         sla_deadline = datetime.utcnow() + timedelta(hours=reasoning_result.sla_hours)
         
-        # Step 4: Save complaint to database
+        # Step 4: Generate initial SHAP explanation for the complaint
+        from app.db.models import DecisionFeatures
+        from app.services.decision_model import decision_model
+        
+        initial_features = DecisionFeatures(
+            time_since_sla_breach=-reasoning_result.sla_hours,  # Negative = before breach
+            category_priority=reasoning_result.priority_level if hasattr(reasoning_result, 'priority_level') else 5,
+            number_of_followups=0,
+            days_since_submission=0.0,
+            status_score=1  # Just submitted
+        )
+        
+        shap_explanation = decision_model.explain_prediction(initial_features)
+        
+        # Build comprehensive AI report with vision + SHAP data
+        import json
+        ai_report_data = {
+            "vision_summary": vision_result.summary,
+            "vision_confidence": vision_result.confidence,
+            "detected_issue": vision_result.issue,
+            "shap_values": shap_explanation["shap_values"],
+            "feature_importance": shap_explanation["feature_importance"],
+            "prediction": shap_explanation["action"],
+            "confidence": shap_explanation["confidence"],
+            "explanation_text": shap_explanation["explanation_text"]
+        }
+        
+        # Step 5: Save complaint to database
         complaint_data = {
             "id": complaint_id,
             "user_id": user_id,
@@ -111,7 +138,7 @@ async def create_complaint(
             "status": "submitted",
             "ai_detected_category": vision_result.issue,
             "ai_confidence": int(vision_result.confidence * 100),
-            "ai_report": vision_result.summary,
+            "ai_report": json.dumps(ai_report_data),
             "assigned_department": reasoning_result.department_id,
             "official_summary": reasoning_result.official_summary,
             "sla_hours": reasoning_result.sla_hours,
@@ -128,11 +155,13 @@ async def create_complaint(
             metadata={
                 "ai_category": vision_result.issue,
                 "ai_confidence": vision_result.confidence,
-                "assigned_department": reasoning_result.department_name
+                "assigned_department": reasoning_result.department_name,
+                "initial_prediction": shap_explanation["action"],
+                "ml_confidence": shap_explanation["confidence"]
             }
         )
         
-        # Step 5: Initialize workflow (send initial email)
+        # Step 6: Initialize workflow (send initial email)
         await initialize_complaint_workflow(
             complaint_id=complaint_id,
             department_id=reasoning_result.department_id,
@@ -142,7 +171,7 @@ async def create_complaint(
             image_url=image_url
         )
         
-        # Step 6: Schedule follow-up
+        # Step 7: Schedule follow-up
         schedule_complaint_followup(complaint_id, reasoning_result.sla_hours)
         
         logger.info(f"Complaint {complaint_id} created successfully")

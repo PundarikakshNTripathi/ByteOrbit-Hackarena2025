@@ -141,10 +141,39 @@ async def process_complaint_followup(complaint_id: str):
             status_score=status_score
         )
         
-        # Get AI decision
+        # Get AI decision with SHAP explanation
         action, confidence = decision_model.predict_action(features)
+        shap_explanation = decision_model.explain_prediction(features)
         
         logger.info(f"Decision for {complaint_id}: {action} (confidence: {confidence:.2f})")
+        
+        # Update complaint with latest AI analysis
+        import json
+        existing_report = complaint.get("ai_report")
+        
+        # Parse existing report or create new one
+        if existing_report:
+            try:
+                ai_report_data = json.loads(existing_report) if isinstance(existing_report, str) else existing_report
+            except:
+                ai_report_data = {}
+        else:
+            ai_report_data = {}
+        
+        # Update with latest SHAP data
+        ai_report_data.update({
+            "shap_values": shap_explanation["shap_values"],
+            "feature_importance": shap_explanation["feature_importance"],
+            "prediction": shap_explanation["action"],
+            "confidence": shap_explanation["confidence"],
+            "explanation_text": shap_explanation["explanation_text"],
+            "last_updated": datetime.utcnow().isoformat()
+        })
+        
+        # Write back to database
+        supabase_client.table("complaints").update({
+            "ai_report": json.dumps(ai_report_data)
+        }).eq("id", complaint_id).execute()
         
         # Execute the recommended action
         if action == "escalate":
